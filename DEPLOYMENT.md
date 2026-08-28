@@ -4,8 +4,18 @@
 
 Deployment target is **Vercel**, connected directly to this GitHub
 repository. Framework-native Next.js configuration is preferred — Vercel
-project settings are not modified unless there's a documented reason
-(none exist yet).
+project settings are not modified unless there's a documented reason.
+
+**Documented exception:** `vercel.json` pins `"framework": "nextjs"`.
+The Vercel project was connected to this repo before any code existed,
+so Vercel couldn't auto-detect the framework at connection time and
+defaulted to a static-site preset (expecting a `public/` output
+directory), which fails on a Next.js build with "No Output Directory
+named 'public' found." Pinning the framework in version control fixes
+this durably. If deployments still fail after this file is present,
+also check Project Settings → General → Build & Development Settings →
+Framework Preset in the Vercel dashboard and confirm it says "Next.js"
+(an explicit dashboard override can in some cases take precedence).
 
 ## Branching and environments
 
