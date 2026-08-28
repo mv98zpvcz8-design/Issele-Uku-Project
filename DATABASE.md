@@ -87,11 +87,12 @@ Supabase's managed auth table.
 | created_at | timestamptz | |
 
 ### `sources`
-A dedicated citation record, reusable across content types via join tables.
+A dedicated citation record, reusable across content types via join tables, and the backing table for the public Research Library (Phase 4).
 
 | column | type |
 |---|---|
 | id | uuid PK |
+| slug | text, unique |
 | title | text |
 | author | text |
 | publisher | text |
@@ -102,7 +103,33 @@ A dedicated citation record, reusable across content types via join tables.
 | archive_reference | text, nullable |
 | citation | text — full formatted citation |
 | reliability_notes | text, nullable |
+| access_status | text (full_text_available, external_access, metadata_only, restricted) — what the Research Library shows a visitor per the brief's requirement |
+| verification_status | content_status, default `DRAFT` |
+| public_visibility | boolean, generated from verification_status |
 | created_at, updated_at | timestamptz |
+
+Added by `20260828130000_sources_workflow.sql` (after the original
+`sources` migration): `slug`, `access_status`, `verification_status`,
+`public_visibility`, and a changed RLS read policy — see DECISIONS.md
+D-021 for why sources moved from "always public" to the same publish
+workflow as every other content table.
+
+### `culture_categories`
+Festivals, Ine Aho, Akwa Ocha, titles, ceremonies, language, etc. — a real content table (not an enum or a tag) specifically because the brief wants new categories addable without a migration, and each category needs its own description/sourcing/evidence type.
+
+| column | type |
+|---|---|
+| id | uuid PK |
+| slug | text, unique |
+| name | text |
+| description | text, nullable |
+| evidence_type | evidence_type, default `UNVERIFIED` |
+| confidence_level | confidence_level, default `UNKNOWN` |
+| verification_status | content_status, default `DRAFT` |
+| public_visibility | boolean, generated from verification_status |
+| created_at, updated_at | timestamptz |
+
+Join table `archive_item_culture_categories`: `(archive_item_id, category_id)` — links relevant photographs/documents/recordings to the culture categories they illustrate.
 
 ### `archive_items`
 The core searchable archive record. Field list matches the brief directly.

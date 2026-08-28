@@ -80,6 +80,7 @@ interface PublicTables {
       sources: {
         Row: {
           id: string;
+          slug: string;
           title: string;
           author: string | null;
           publisher: string | null;
@@ -90,13 +91,36 @@ interface PublicTables {
           archive_reference: string | null;
           citation: string | null;
           reliability_notes: string | null;
+          access_status: string;
+          verification_status: ContentStatus;
+          public_visibility: boolean;
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<PublicTables["sources"]["Row"], "id" | "created_at" | "updated_at"> & {
-          id?: string;
-        };
+        Insert: Omit<
+          PublicTables["sources"]["Row"],
+          "id" | "public_visibility" | "created_at" | "updated_at"
+        > & { id?: string };
         Update: Partial<PublicTables["sources"]["Insert"]>;
+      };
+      culture_categories: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          description: string | null;
+          evidence_type: EvidenceType;
+          confidence_level: ConfidenceLevel;
+          verification_status: ContentStatus;
+          public_visibility: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          PublicTables["culture_categories"]["Row"],
+          "id" | "public_visibility" | "created_at" | "updated_at"
+        > & { id?: string };
+        Update: Partial<PublicTables["culture_categories"]["Insert"]>;
       };
       places: {
         Row: {
@@ -346,6 +370,11 @@ interface PublicTables {
       monarch_events: {
         Row: { monarch_id: string; event_id: string };
         Insert: { monarch_id: string; event_id: string };
+        Update: never;
+      };
+      archive_item_culture_categories: {
+        Row: { archive_item_id: string; category_id: string };
+        Insert: { archive_item_id: string; category_id: string };
         Update: never;
       };
 }

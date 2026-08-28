@@ -37,17 +37,49 @@ values (
   'PUBLISHED'
 );
 
--- A demo source, showing what a DOCUMENTED citation looks like.
-insert into public.sources (id, title, author, publisher, publication_date, source_type, citation, reliability_notes)
+-- A demo source, showing what a DOCUMENTED citation looks like in the
+-- Research Library, published so it's visible there.
+insert into public.sources (id, slug, title, author, publisher, publication_date, source_type, citation, reliability_notes, access_status, verification_status)
 values (
   '00000000-0000-0000-0003-000000000001',
+  'sample-bibliographic-record',
   '[SAMPLE] Demo Bibliographic Record',
   'A. Fictional Author',
   'Demo University Press',
   '1999-01-01',
   'book',
   'Fictional Author, A. (1999). [SAMPLE] Demo Bibliographic Record. Demo University Press.',
-  'Fictional source, present only to demonstrate the citation/source display in the archive and research library.'
+  'Fictional source, present only to demonstrate the citation/source display in the archive and research library.',
+  'metadata_only',
+  'PUBLISHED'
+);
+
+-- A second source, deliberately left in DRAFT, to demonstrate that a
+-- newly-created Research Library entry is not public until published.
+insert into public.sources (slug, title, source_type, access_status, verification_status)
+values (
+  'sample-draft-bibliographic-record',
+  '[SAMPLE] Demo draft bibliographic record (not yet public)',
+  'journal_article',
+  'metadata_only',
+  'DRAFT'
+);
+
+-- Two culture categories, one published, one draft.
+insert into public.culture_categories (id, slug, name, description, evidence_type, confidence_level, verification_status)
+values (
+  '00000000-0000-0000-0006-000000000001',
+  'sample-festivals',
+  '[SAMPLE] Demo Festivals',
+  'A fictional culture category used only to demonstrate the Culture section''s layout and its link to related archive records.',
+  'UNVERIFIED', 'UNKNOWN', 'PUBLISHED'
+);
+insert into public.culture_categories (slug, name, description, verification_status)
+values (
+  'sample-draft-category',
+  '[SAMPLE] Demo draft category (not yet public)',
+  'Demonstrates that a newly-created culture category is not public until published.',
+  'DRAFT'
 );
 
 -- Four archive items, one per evidence type that isn't UNVERIFIED, plus
@@ -99,6 +131,13 @@ insert into public.archive_items (
     '[SAMPLE] Demo Bibliographic Record', 'See linked source record.',
     'COPYRIGHTED_METADATA_ONLY', 'metadata_only', 'PUBLISHED', 'DOCUMENTED', 'MEDIUM', false
   );
+
+-- Link the documented demo record to the demo Festivals category, so the
+-- Culture section has something to show.
+insert into public.archive_item_culture_categories (archive_item_id, category_id)
+select ai.id, cc.id
+from public.archive_items ai, public.culture_categories cc
+where ai.slug = 'sample-documented-record' and cc.slug = 'sample-festivals';
 
 -- A demo historical event, linked to the demo place and demo person.
 insert into public.historical_events (

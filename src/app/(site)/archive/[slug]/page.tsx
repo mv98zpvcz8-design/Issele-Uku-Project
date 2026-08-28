@@ -7,10 +7,8 @@ import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CopyrightNotice } from "@/components/archive/CopyrightNotice";
 import { humanizeRecordType } from "@/lib/archive/labels";
 import { createClient } from "@/lib/supabase/server";
-
-const SUPABASE_CONFIGURED = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
+import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 
 async function getItem(slug: string) {
   const supabase = await createClient();
@@ -44,12 +42,7 @@ export default async function ArchiveItemPage({
   if (!SUPABASE_CONFIGURED) {
     return (
       <Container className="py-16">
-        <div className="rounded-lg border border-dashed border-line bg-paper-muted p-8 text-center">
-          <p className="font-semibold text-ink">The archive database isn&apos;t connected yet.</p>
-          <p className="mt-2 text-sm text-ink-soft">
-            This page will show the record once a Supabase project is connected.
-          </p>
-        </div>
+        <StateNotice variant="not-connected" {...NOT_CONNECTED_NOTICE} />
       </Container>
     );
   }

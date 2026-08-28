@@ -4,6 +4,8 @@ import { Container } from "@/components/layout/Container";
 import { ArchiveFilters } from "@/components/archive/ArchiveFilters";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
 import { createClient } from "@/lib/supabase/server";
+import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
+import { StateNotice, NOT_CONNECTED_NOTICE, LOAD_ERROR_NOTICE } from "@/components/ui/StateNotice";
 import {
   ARCHIVE_PAGE_SIZE,
   archiveOffset,
@@ -15,10 +17,6 @@ export const metadata: Metadata = {
   title: "Archive",
   description: "Search photographs, documents, audio, maps and more from the Issele-Uku archive.",
 };
-
-const SUPABASE_CONFIGURED = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
 
 function buildPageHref(searchParams: Record<string, string | string[] | undefined>, page: number) {
   const params = new URLSearchParams();
@@ -60,25 +58,12 @@ export default async function ArchivePage({
 
       <div className="mt-8">
         {!SUPABASE_CONFIGURED ? (
-          <NotConnectedState />
+          <StateNotice variant="not-connected" {...NOT_CONNECTED_NOTICE} />
         ) : (
           <ArchiveResults filters={filters} rawSearchParams={rawSearchParams} />
         )}
       </div>
     </Container>
-  );
-}
-
-function NotConnectedState() {
-  return (
-    <div className="rounded-lg border border-dashed border-line bg-paper-muted p-8 text-center">
-      <p className="font-semibold text-ink">The archive database isn&apos;t connected yet.</p>
-      <p className="mt-2 text-sm text-ink-soft">
-        This page is fully built and will show live, searchable records as soon as a Supabase
-        project is connected (see DEPLOYMENT.md). This is expected during development — it is not
-        a bug.
-      </p>
-    </div>
   );
 }
 
@@ -111,24 +96,16 @@ async function ArchiveResults({
   const { data, error, count } = await query;
 
   if (error) {
-    return (
-      <div className="rounded-lg border border-line bg-paper-muted p-8 text-center">
-        <p className="font-semibold text-ink">The archive couldn&apos;t be loaded.</p>
-        <p className="mt-2 text-sm text-ink-soft">
-          Something went wrong reaching the database. Please try again shortly.
-        </p>
-      </div>
-    );
+    return <StateNotice variant="error" {...LOAD_ERROR_NOTICE} />;
   }
 
   if (!data || data.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-line bg-paper-muted p-8 text-center">
-        <p className="font-semibold text-ink">No records match these filters.</p>
-        <p className="mt-2 text-sm text-ink-soft">
-          Try clearing a filter, or check back later — the archive is continuously growing.
-        </p>
-      </div>
+      <StateNotice
+        variant="empty"
+        title="No records match these filters."
+        description="Try clearing a filter, or check back later — the archive is continuously growing."
+      />
     );
   }
 
