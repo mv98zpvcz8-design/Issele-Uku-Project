@@ -41,9 +41,24 @@ export type ConsentStatus =
   | "DECLINED"
   | "WITHDRAWN";
 
-export interface Database {
-  public: {
-    Tables: {
+/**
+ * `@supabase/supabase-js`'s generic client type requires each table to
+ * carry a `Relationships` array and the schema to declare `Views`/
+ * `Functions` (see node_modules/@supabase/postgrest-js's `GenericTable`/
+ * `GenericSchema`) — without this, the generic silently fails to match
+ * and every query's row type degrades to `never` with no clear error.
+ * This wraps the actual Row/Insert/Update definitions below with the
+ * `Relationships: []` field they need (we don't use embedded/nested
+ * resource selects, so an empty array is accurate) without repeating it
+ * on every table.
+ */
+type WithRelationships<T> = {
+  [K in keyof T]: T[K] extends { Row: unknown; Insert: unknown; Update: unknown }
+    ? T[K] & { Relationships: [] }
+    : never;
+};
+
+interface PublicTables {
       profiles: {
         Row: {
           id: string;
@@ -78,10 +93,10 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["sources"]["Row"], "id" | "created_at" | "updated_at"> & {
+        Insert: Omit<PublicTables["sources"]["Row"], "id" | "created_at" | "updated_at"> & {
           id?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["sources"]["Insert"]>;
+        Update: Partial<PublicTables["sources"]["Insert"]>;
       };
       places: {
         Row: {
@@ -103,10 +118,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["places"]["Row"],
+          PublicTables["places"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["places"]["Insert"]>;
+        Update: Partial<PublicTables["places"]["Insert"]>;
       };
       archive_items: {
         Row: {
@@ -145,10 +160,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["archive_items"]["Row"],
+          PublicTables["archive_items"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["archive_items"]["Insert"]>;
+        Update: Partial<PublicTables["archive_items"]["Insert"]>;
       };
       archive_media: {
         Row: {
@@ -160,10 +175,10 @@ export interface Database {
           is_primary: boolean;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["archive_media"]["Row"], "id" | "created_at"> & {
+        Insert: Omit<PublicTables["archive_media"]["Row"], "id" | "created_at"> & {
           id?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["archive_media"]["Insert"]>;
+        Update: Partial<PublicTables["archive_media"]["Insert"]>;
       };
       people: {
         Row: {
@@ -186,10 +201,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["people"]["Row"],
+          PublicTables["people"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["people"]["Insert"]>;
+        Update: Partial<PublicTables["people"]["Insert"]>;
       };
       historical_events: {
         Row: {
@@ -210,10 +225,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["historical_events"]["Row"],
+          PublicTables["historical_events"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["historical_events"]["Insert"]>;
+        Update: Partial<PublicTables["historical_events"]["Insert"]>;
       };
       monarchs: {
         Row: {
@@ -236,10 +251,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["monarchs"]["Row"],
+          PublicTables["monarchs"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["monarchs"]["Insert"]>;
+        Update: Partial<PublicTables["monarchs"]["Insert"]>;
       };
       oral_histories: {
         Row: {
@@ -266,10 +281,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["oral_histories"]["Row"],
+          PublicTables["oral_histories"]["Row"],
           "id" | "public_visibility" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Database["public"]["Tables"]["oral_histories"]["Insert"]>;
+        Update: Partial<PublicTables["oral_histories"]["Insert"]>;
       };
       submissions: {
         Row: {
@@ -288,10 +303,10 @@ export interface Database {
           updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["submissions"]["Row"],
+          PublicTables["submissions"]["Row"],
           "id" | "review_status" | "reviewer_notes" | "created_at" | "updated_at"
         > & { id?: string };
-        Update: Partial<Pick<Database["public"]["Tables"]["submissions"]["Row"], "review_status" | "reviewer_notes">>;
+        Update: Partial<Pick<PublicTables["submissions"]["Row"], "review_status" | "reviewer_notes">>;
       };
       person_sources: {
         Row: { person_id: string; source_id: string };
@@ -333,6 +348,12 @@ export interface Database {
         Insert: { monarch_id: string; event_id: string };
         Update: never;
       };
-    };
+}
+
+export interface Database {
+  public: {
+    Tables: WithRelationships<PublicTables>;
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
   };
 }
