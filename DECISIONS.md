@@ -1,0 +1,91 @@
+# Decision Log — Oligbo Digital Archive
+
+Each entry records a meaningful technical or product decision: what was decided, why, what alternatives were considered, and the consequences. Newest entries at the top.
+
+---
+
+## D-014 — Restrained motion tier: CSS-only, opt-out-safe animation
+**Decision:** Add a small, deliberately limited amount of motion: a one-time fade/rise on the homepage hero (plain CSS keyframes), a scroll-triggered fade/rise on below-the-fold sections and cards (CSS `animation-timeline: view()`, gated behind `@supports` so unsupported browsers just render the content fully visible with no animation at all), and hover micro-interactions (lift + shadow on cards/buttons, an underline sweep on nav links). Everything is wrapped in `@media (prefers-reduced-motion: no-preference)`. No JavaScript animation library, no IntersectionObserver, no client-side reveal logic.
+**Reason:** The user asked for a more "modern, young, animated" feel; the original brief explicitly warned against "excessive animations" and a "tech-startup aesthetic" for an archive meant to be credible to the Obi and cultural institutions. Asked the user directly to calibrate (AskUserQuestion) and they chose the restrained option: keep the archival palette and avoid stock/AI imagery, add only subtle motion. A CSS-only approach means the base (no-JS, unsupported browser, or reduced-motion) state is always fully visible content — there is no risk of a broken page if a script fails to load or a browser lacks support, which a JS-driven "hidden until observed" pattern would risk.
+**Alternatives considered:** A JS `IntersectionObserver`-based reveal (rejected — adds a client bundle, and risks content staying invisible if JS fails, which would be a real regression for a heritage-archive audience that may include lower-end devices/connections); a full "startup" visual treatment with stock imagery and heavy animation (rejected per the user's own choice, and per the original brief's explicit prohibition).
+**Consequences:** No new dependency added. Motion is invisible/no-op on browsers without `animation-timeline` support (notably Safari, as of this writing) — they simply see the static, always-visible layout, which is an acceptable and intentional degradation.
+
+## D-013 — Vercel branch workflow: feature branch → Preview → review → merge → production
+**Decision:** All development happens on feature branches (this project's designated branch, `claude/oligbo-digital-archive-mvp-amovee`, for AI-assisted work). Vercel Preview Deployments are the verification step before any merge to the production branch. Nothing is pushed to production without the Preview build succeeding, loading correctly (including on mobile), showing no runtime errors or broken routes, exposing no secrets, connecting correctly to required services, and passing lint/type/test checks locally.
+**Reason:** Explicit project instruction, and good practice for a project that will eventually be demonstrated to palace/community stakeholders — production should never be in a broken or half-finished state.
+**Alternatives considered:** Direct commits to production — rejected, too high-risk for a project with a credibility bar to clear before a stakeholder demo.
+**Consequences:** PRs are opened only when explicitly requested; the deployment checklist in DEPLOYMENT.md is followed before proposing any merge.
+
+## D-012 — Search engines are blocked (noindex) until a deliberate decision to open up
+**Decision:** `robots` metadata and `app/robots.ts` default to disallowing all indexing, gated behind `NEXT_PUBLIC_ALLOW_SEARCH_INDEXING` (default false/unset).
+**Reason:** Explicit project instruction: during early development, unfinished/demo content should not be surfaced by search engines as if it were authoritative Issele-Uku history.
+**Alternatives considered:** Leaving default Next.js behavior (indexable) and relying on a launch-day manual change — rejected as an easy step to forget; an explicit env flag makes the current state visible in every environment's config and in code review.
+**Consequences:** Before any public promotion, `NEXT_PUBLIC_ALLOW_SEARCH_INDEXING=true` must be deliberately set in Vercel for Production (and a real `sitemap.ts` added) — tracked in ROADMAP.md/PRE_PALACE_REVIEW.md.
+
+---
+
+## D-001 — Repository is a greenfield build
+**Decision:** Treat this as a from-scratch project; no existing code was found to preserve or migrate.
+**Reason:** Repository inspection (Phase 0) found zero commits and zero files.
+**Alternatives considered:** N/A — nothing existed to choose between.
+**Consequences:** Full freedom in Phase 1 structure; no legacy constraints.
+
+## D-002 — Next.js App Router, not Pages Router
+**Decision:** Use the Next.js App Router (`app/` directory) for all routing.
+**Reason:** It is the current, actively developed Next.js paradigm, has better support for nested layouts (useful for admin vs. public separation), server components (good for a content-heavy, SEO-sensitive archive site), and built-in metadata APIs for SEO.
+**Alternatives considered:** Pages Router — rejected as legacy, weaker metadata/SEO ergonomics.
+**Consequences:** Requires care with client/server component boundaries; admin interactivity will need explicit `"use client"` components.
+
+## D-003 — Supabase for auth, database, and storage
+**Decision:** Use Supabase (PostgreSQL + Auth + Storage) as specified.
+**Reason:** Mandated by the project brief; also a good fit — Postgres gives us relational integrity for the historical/evidence model, Row Level Security gives us a real enforcement layer for public/draft/restricted visibility, and Storage handles media (photos, audio, documents) with signed URLs for access control.
+**Alternatives considered:** None — specified technology.
+**Consequences:** All admin mutations must go through server-side code using the service-role key (never exposed to the client); public reads use the anon key constrained by RLS policies.
+
+## D-004 — Route groups to separate public site from admin
+**Decision:** Structure the App Router with `app/(public)/...` for all public-facing pages and `app/admin/...` (with its own layout and auth guard) for the admin interface.
+**Reason:** Working rule #16 requires clear separation between public content and admin functionality. Route groups plus a dedicated admin layout with a server-side session check make the boundary explicit and hard to bypass accidentally.
+**Alternatives considered:** A single flat route tree with per-page auth checks — rejected as easier to forget a guard on a new page.
+**Consequences:** Slightly more directory nesting; much lower risk of an unguarded admin page.
+
+## D-005 — Evidence/confidence model lives at the database layer, not just the UI
+**Decision:** `evidence_type`, `confidence_level`, and `verification_status` are first-class columns (backed by Postgres enums) on ArchiveItem and HistoricalEvent, not just a UI convention.
+**Reason:** The brief treats historical rigor as a hard requirement ("never invent facts," "clearly distinguish oral tradition from documented fact"). Enforcing this at the schema level means it can't be silently dropped in a future UI redesign, and it lets us build server-side guarantees (e.g., a DB constraint or admin-form requirement that every published item has an evidence type).
+**Alternatives considered:** Free-text tags — rejected as unstructured and easy for the badges to get out of sync with reality.
+**Consequences:** Requires an explicit migration for the enum types; adding a new evidence category later means a migration, not just a UI change (acceptable trade-off given how central this is).
+
+## D-006 — Content workflow as an explicit status enum, not a boolean `published`
+**Decision:** Use a `content_status` enum: `DRAFT → RESEARCH → REVIEW → APPROVED → PUBLISHED`, plus a separate `RESTRICTED` state, on every content model (ArchiveItem, Person, Place, HistoricalEvent, Monarch).
+**Reason:** The brief specifies this exact workflow. A boolean can't express "approved but not yet published" or "was published, now restricted pending a sensitivity review."
+**Alternatives considered:** Boolean `is_published` + separate `is_restricted` flag — rejected, it allows contradictory states and doesn't capture the research/review pipeline the brief asks for.
+**Consequences:** RLS policies key off this enum (`PUBLISHED` = publicly visible, everything else = admin/role-only). Admin UI needs a clear status stepper.
+
+## D-007 — Oral history visibility defaults to private/restricted
+**Decision:** `OralHistory` records default to non-public visibility even after a file is uploaded and a transcript exists; publication requires an explicit admin action confirming consent and publication permission are on file.
+**Reason:** Working rule and the brief's Oral History Rules section: "An interview must not automatically become publicly visible simply because a file has been uploaded." This is a consent/privacy requirement, not just a workflow nicety.
+**Alternatives considered:** Reusing the generic content_status pipeline alone — insufficient, because oral history needs consent_status and publication_permission as independent gates that must ALL be satisfied, not just "PUBLISHED" status.
+**Consequences:** OralHistory publication logic (and its RLS policy) checks `content_status = PUBLISHED AND consent_status = 'GRANTED' AND publication_permission = true` before public exposure, with support for `restricted_sections` to redact part of a transcript even when the rest is public.
+
+## D-008 — Copyright/rights status modeled as an explicit enum per ArchiveItem
+**Decision:** `copyright_status` enum: `PUBLIC_DOMAIN | PERMISSION_GRANTED | COPYRIGHTED_METADATA_ONLY | UNKNOWN | RESTRICTED`, paired with `publication_permission` (boolean/notes) and `access_status`.
+**Reason:** The brief is explicit that copyrighted material without permission must be stored as metadata/citation only, never as a re-hosted file. This needs to be enforced at data-entry time, and the public UI needs to render differently for metadata-only records (citation + external link, no embedded viewer/download).
+**Alternatives considered:** Leaving this to admin discipline/documentation only — rejected as too easy to get wrong with real consequences (copyright infringement).
+**Consequences:** Media upload UI in the admin must branch on `copyright_status`; `COPYRIGHTED_METADATA_ONLY` records should not have an attached full-file media record at all (only cover/thumbnail if separately licensed).
+
+## D-009 — Placeholder/demo content policy
+**Decision:** No real Issele-Uku historical facts, names, dates, or citations will be invented. All seed/demo data is clearly prefixed/labelled `[SAMPLE]` or `[DEMO]` in title fields and carries `evidence_type = UNVERIFIED`. Where real content is referenced structurally but not yet supplied, the UI renders literal placeholder copy such as "Research pending" or "Historical account requires verification."
+**Reason:** Explicit, repeated working rule from the brief; avoids the site ever being mistaken for a source of verified Issele-Uku history before real research is vetted.
+**Alternatives considered:** Leaving fields empty — rejected because empty fields read as a bug rather than an intentional research-pending state; explicit placeholder text is clearer to a non-technical reviewer (including palace stakeholders).
+**Consequences:** Slightly more upfront copywriting for empty/placeholder states across every content type.
+
+## D-010 — Tooling: ESLint + Prettier + TypeScript strict mode, no extra state/UI libraries yet
+**Decision:** Use Next.js's built-in ESLint config, Prettier for formatting, TypeScript in `strict` mode. Do not add a client state manager (Redux/Zustand), UI kit (MUI/Chakra), or ORM (Prisma/Drizzle) in Phase 1.
+**Reason:** Working rules #6–9 and #11 (prefer maintainability, avoid unnecessary packages, justify every dependency, keep TypeScript strict). The MVP's data needs are served well by Supabase's JS client directly with hand-written types generated from the schema; React Server Components reduce the need for client state; Tailwind covers styling without a component-kit dependency.
+**Alternatives considered:** Prisma (rejected for now — Supabase's generated types + SQL migrations are sufficient and avoid a second schema-definition source of truth; can be revisited later without a rebuild). Zustand (rejected — no cross-page client state need identified yet in the MVP).
+**Consequences:** If a genuine need for client state or an ORM emerges later, it will be proposed with justification before adding, per working rule #9.
+
+## D-011 — Fonts and imagery approach
+**Decision:** Use a serif display typeface paired with a clean sans-serif body face (self-hosted via `next/font`, no external font CDN calls at runtime), generous whitespace, and real/placeholder photography rather than illustration, icon patterns, or stock "African pattern" motifs.
+**Reason:** Brief explicitly asks for a museum/archival-institution feel, not a startup or stereotyped-African-pattern look, and calls out avoiding AI-looking stock imagery.
+**Alternatives considered:** A patterned/decorative design system — rejected per explicit brief guidance.
+**Consequences:** Until real photography is supplied, image slots will show neutral placeholder treatments (e.g. muted background + caption "Image pending") rather than generic stock photos or invented decorative art.
