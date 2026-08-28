@@ -4,6 +4,12 @@ Each entry records a meaningful technical or product decision: what was decided,
 
 ---
 
+## D-019 — `node:test` instead of a test-framework dependency
+**Decision:** Unit tests use Node's built-in test runner (`node --experimental-strip-types --test`) and `node:assert`, not Vitest/Jest. `tsconfig.json` gains `allowImportingTsExtensions: true` (safe alongside the existing `noEmit: true`) so test files can import their subject with an explicit `.ts` extension, which Node's native TS support requires at runtime.
+**Reason:** Working rules #8/#9 (don't install unnecessary packages, justify every dependency) and #24 (add tests for important logic — here, the PostgREST `.or()`-filter escaping in `src/lib/archive/search.ts`, where a bug would be a real injection-shaped correctness issue). Node 22 (this project's runtime) has a built-in test runner and native TypeScript execution; nothing a test framework provides is currently needed (no component rendering tests yet, no mocking framework requirement).
+**Alternatives considered:** Vitest (the common Next.js choice) — rejected for now as an unjustified dependency for the current, small amount of pure-logic testing; revisit if/when component-level testing (e.g. React Testing Library) becomes genuinely necessary.
+**Consequences:** `npm test` runs `node --experimental-strip-types --test src/**/*.test.ts`. If real component tests are needed later, adding Vitest at that point should be proposed with justification, not assumed.
+
 ## D-018 — One Supabase project for now, not separate Preview/Production projects
 **Decision:** Use a single free-tier Supabase project for Development, Preview, and Production for now, rather than provisioning a second project purely for Preview isolation.
 **Reason:** Cost-control rule: a second project is a real (if free) additional resource, and there's no real archive data yet to protect from an experimental Preview deployment — the risk the isolation would guard against doesn't exist yet. Flagged to the user rather than created unilaterally.
