@@ -50,8 +50,11 @@ src/
                            and later EvidenceBadge, ConfidenceLabel, etc.)
   lib/
     site-config.ts        Branding + nav, single source of truth for rename-ability
-    supabase/              Added in Phase 2: typed client factories (browser vs.
-                           server vs. service-role), generated DB types
+    supabase/
+      types.ts             Hand-authored Database types matching supabase/migrations/*.sql
+      browser.ts           Client-side client (anon key) — for "use client" components
+      server.ts             Server Components/Actions client (anon key, cookie-based session)
+      service-role.ts       Server-only client that bypasses RLS — see its own doc comment
 ```
 
 ## Why a route group for the public site

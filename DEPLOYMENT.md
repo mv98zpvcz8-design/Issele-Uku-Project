@@ -62,23 +62,78 @@ first, and you'll be told explicitly: the exact variable name, where to
 obtain it, where to enter it in Vercel, which environments it applies to,
 and whether it's public or secret. None of that has come up yet.
 
-## Database environments (Phase 2 onward)
+## Database environments
 
-To avoid a Preview deployment accidentally modifying production archive
-data, the plan is a **separate Supabase project (or schema) for
-development/preview** versus production, with Preview's environment
-variables pointed at the non-production project. This will be finalized
-and documented here when Phase 2 starts; it is a cost consideration (an
-additional free-tier Supabase project) that will be flagged before
-creating it, per the project's cost-control rule.
+The schema (`supabase/migrations/`) and demo seed data
+(`supabase/seed.sql`) are built and validated (see DATABASE.md), but no
+live Supabase project is connected yet — that step needs you, since it
+requires a Supabase account.
+
+**One free-tier Supabase project is enough to start** (a single project
+can serve both Preview and Production for now, since there's no real
+archive data yet to protect — see the cost note below). A second project
+purely for Preview isolation is a reasonable future upgrade once the
+archive holds real content worth protecting from an experimental Preview
+deployment; it would be a second free-tier project, flagged to you before
+creating it, per the cost-control rule.
+
+### To connect Supabase, here's what I need from you
+
+1. **Create a Supabase project** at supabase.com (free tier) if you
+   haven't already — any project name/region is fine.
+2. In that project's dashboard, go to **Project Settings → API** and
+   copy:
+   - the **Project URL**
+   - the **anon / public key**
+   - the **service_role key** (click "reveal" — keep this one private)
+3. Add these to your Vercel project (**Project Settings → Environment
+   Variables**), applied to **Development, Preview, and Production**:
+
+   | Variable | Value from Supabase | Public or secret |
+   |---|---|---|
+   | `NEXT_PUBLIC_SUPABASE_URL` | Project URL | Public |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon / public key | Public |
+   | `SUPABASE_SERVICE_ROLE_KEY` | service_role key | **Secret — enter it directly in Vercel, don't paste it into chat or a file** |
+
+4. Apply the schema to that project: `npx supabase link --project-ref <your-project-ref>` then `npx supabase db push` (pushes `supabase/migrations/`). Demo data is separate and optional: `npx supabase db reset` only against a local/dev database, never against the linked project, seeds it — see DATABASE.md.
+5. For local development, copy `.env.example` to `.env.local` and fill in the same three values (`.env.local` is already git-ignored).
+
+I can run step 4 myself if you paste the project ref and the two public
+values here — the service-role key doesn't need to pass through this
+chat at all, since nothing I've built yet needs it (Phase 6's admin
+system will).
 
 ## Backup and data portability
 
-The archive must not be locked to one vendor. Once the schema exists
-(Phase 2), this section will document: how to export every table to
-JSON/CSV (`supabase db dump`, or scripted `COPY` statements), how media
-in Supabase Storage is organized so it can be bulk-downloaded/migrated,
-and a recommended backup cadence.
+The archive must not be locked to one vendor.
+
+**Schema**: fully defined in `supabase/migrations/`, already portable to
+any Postgres host — nothing here is Supabase-proprietary except the
+`auth.uid()`/`auth.users` references (standard Supabase Auth), which a
+migration away from Supabase would need to replace.
+
+**Data export**, once a live project has real content:
+
+```bash
+# Full logical dump (schema + data), restorable into any Postgres:
+npx supabase db dump --db-url "<connection string from Supabase dashboard>" -f backup.sql
+
+# Or, per table, plain CSV/JSON for portability into a spreadsheet or another system:
+psql "<connection string>" -c "\copy (select * from archive_items) to 'archive_items.csv' with csv header"
+```
+
+**Media**: every `archive_media`/oral-history media row stores a
+`storage_path` into Supabase Storage rather than embedding the file, so
+bucket contents can be bulk-downloaded independently of the database
+(`supabase storage` CLI commands, or the dashboard) and re-linked to a
+different storage backend later if ever needed — the `storage_path`
+column is just a string, not a Supabase-specific reference type.
+
+**Recommended cadence**: a scheduled `supabase db dump` (e.g. weekly via
+a simple GitHub Action once there's real content worth protecting) kept
+somewhere outside Supabase itself (e.g. a private repo or cloud storage
+bucket you control). Not yet set up — flagged here for Phase 9/10 rather
+than built speculatively before there's real data to back up.
 
 ## Deployment checklist (used before every production merge)
 
