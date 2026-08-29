@@ -2,18 +2,11 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { ArchiveItemFields } from "@/components/admin/ArchiveItemFields";
-import { TextField, SelectField, CheckboxField } from "@/components/admin/fields";
+import { TextField, CheckboxField } from "@/components/admin/fields";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 import { PreviewLink } from "@/components/admin/PreviewLink";
 import { requireEditorPage } from "@/lib/admin/session";
-import { updateArchiveItem, deleteArchiveItem, addArchiveMedia, deleteArchiveMedia } from "../actions";
-
-const MEDIA_TYPE_OPTIONS = [
-  { value: "image", label: "Image" },
-  { value: "audio", label: "Audio" },
-  { value: "video", label: "Video" },
-  { value: "document", label: "Document" },
-] as const;
+import { updateArchiveItem, deleteArchiveItem, uploadArchiveMedia, deleteArchiveMedia } from "../actions";
 
 export default async function EditArchiveItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -47,9 +40,9 @@ export default async function EditArchiveItemPage({ params }: { params: Promise<
       <div className="mt-10 max-w-2xl border-t border-line pt-8">
         <h2 className="font-display text-xl font-semibold text-ink">Media</h2>
         <p className="mt-1 text-sm text-ink-soft">
-          Register a file already uploaded to Supabase Storage by its storage path. A file-upload
-          widget with per-item access control (matching copyright status) is a documented
-          follow-up — see ROADMAP.md — not yet built.
+          Files are stored privately — nobody can view or download one directly by URL. Public
+          visitors can only see a file if this item is Published; staff can always preview it via
+          the item&apos;s own page.
         </p>
 
         {metadataOnlyWarning && (
@@ -66,16 +59,17 @@ export default async function EditArchiveItemPage({ params }: { params: Promise<
             {media.map((m) => (
               <li key={m.id} className="flex items-center justify-between rounded-md border border-line bg-paper p-3 text-sm">
                 <div>
-                  <p className="font-medium text-ink">{m.storage_path}</p>
+                  <a href={`/media/${m.id}`} target="_blank" rel="noreferrer" className="font-medium text-accent hover:underline">
+                    {m.caption || m.storage_path.split("/").pop()}
+                  </a>
                   <p className="text-ink-soft">
                     {m.media_type ?? "unknown type"}
                     {m.is_primary ? " · primary" : ""}
-                    {m.caption ? ` · ${m.caption}` : ""}
                   </p>
                 </div>
                 <form action={deleteArchiveMedia.bind(null, m.id, id)}>
                   <ConfirmSubmitButton
-                    confirmMessage="Remove this media entry?"
+                    confirmMessage="Remove this media entry? The file is deleted from storage too."
                     className="text-xs font-medium text-evidence-disputed hover:underline"
                   >
                     Remove
@@ -86,16 +80,29 @@ export default async function EditArchiveItemPage({ params }: { params: Promise<
           </ul>
         )}
 
-        <form action={addArchiveMedia.bind(null, id)} className="mt-4 space-y-3 rounded-lg border border-line bg-paper p-4">
-          <TextField name="storage_path" label="Storage path" required />
-          <SelectField name="media_type" label="Media type" options={MEDIA_TYPE_OPTIONS} />
+        <form
+          action={uploadArchiveMedia.bind(null, id)}
+          className="mt-4 space-y-3 rounded-lg border border-line bg-paper p-4"
+        >
+          <div>
+            <label htmlFor="file" className="block text-xs font-medium text-ink-soft">
+              File
+            </label>
+            <input
+              id="file"
+              name="file"
+              type="file"
+              required
+              className="mt-1 w-full text-sm text-ink file:mr-3 file:rounded-md file:border file:border-line file:bg-paper-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink"
+            />
+          </div>
           <TextField name="caption" label="Caption" />
           <CheckboxField name="is_primary" label="Use as primary/cover media" />
           <button
             type="submit"
             className="rounded-md border border-line px-4 py-2 text-sm font-medium text-ink hover:border-accent hover:text-accent"
           >
-            Add media entry
+            Upload
           </button>
         </form>
       </div>

@@ -36,6 +36,11 @@ export default async function EditPersonPage({ params }: { params: Promise<{ id:
           <TextField name="death_date" label="Death date" type="date" defaultValue={person.death_date} />
           <ListField name="associated_locations" label="Associated locations" defaultValue={person.associated_locations} />
           <TextField name="historical_period" label="Historical period" defaultValue={person.historical_period} />
+          <TextField
+            name="image_media_id"
+            label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
+            defaultValue={person.image_media_id}
+          />
           <SelectField name="evidence_type" label="Evidence type" defaultValue={person.evidence_type} options={EVIDENCE_OPTIONS} />
           <SelectField
             name="confidence_level"

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
+import { CoverImage } from "@/components/archive/CoverImage";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -82,6 +83,8 @@ export default async function MonarchPage({ params }: { params: Promise<{ slug: 
       <Link href="/monarchy" className="text-sm font-medium text-accent hover:underline">
         ← Back to monarchy
       </Link>
+
+      <CoverImage mediaId={monarch.image_media_id} alt={monarch.regnal_name ?? monarch.name} />
 
       <h1 className="mt-4 font-display text-3xl font-semibold text-ink sm:text-4xl">
         {monarch.regnal_name ?? monarch.name}

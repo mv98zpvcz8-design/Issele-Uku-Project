@@ -79,37 +79,77 @@ export async function deleteArchiveItem(id: string) {
   redirect("/admin/archive-items");
 }
 
+/** Strips path separators and anything but a conservative filename character set. */
+function sanitizeFilename(name: string): string {
+  const base = name.split(/[/\\]/).pop() ?? "file";
+  return base.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100);
+}
+
+function inferMediaType(mimeType: string): string {
+  const [kind] = mimeType.split("/");
+  if (kind === "image" || kind === "audio" || kind === "video") return kind;
+  return "document";
+}
+
 /**
- * Adds a media ROW (storage_path/caption/type) — not a file upload
- * widget. Actual file upload needs a configured Supabase Storage bucket
- * with access-control policies matching each item's copyright_status
- * (public bucket vs. signed URLs), which hasn't been built yet — see
- * ROADMAP.md. An admin can still register a file that was uploaded to
- * Storage by some other means (the Supabase dashboard, for now) by
- * pasting its storage path here.
+ * Uploads the actual file to the private `archive-media` Storage bucket
+ * (see the storage migration for why it's private) using the caller's
+ * own authenticated session — Storage's own RLS-equivalent policies on
+ * that bucket require can_edit(), same as archive_media's table
+ * policies, so this is an ordinary RLS-respecting write, not a
+ * service-role shortcut (consistent with D-025). The storage path is
+ * generated here from a fresh UUID, never taken from the client, so a
+ * submitter/admin can't control where their file lands or overwrite
+ * another item's file by guessing a path.
  */
-export async function addArchiveMedia(itemId: string, formData: FormData) {
+export async function uploadArchiveMedia(itemId: string, formData: FormData) {
   await requireEditor();
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Choose a file to upload.");
+  }
+
   const supabase = await createClient();
-  const storagePath = str(formData, "storage_path");
-  if (!storagePath) return;
+  const storagePath = `${itemId}/${crypto.randomUUID()}-${sanitizeFilename(file.name)}`;
+  const { error: uploadError } = await supabase.storage
+    .from("archive-media")
+    .upload(storagePath, file, { contentType: file.type || undefined });
+  if (uploadError) throw new Error(uploadError.message);
+
   const { error } = await supabase.from("archive_media").insert({
     archive_item_id: itemId,
     storage_path: storagePath,
-    media_type: str(formData, "media_type"),
+    media_type: inferMediaType(file.type),
     caption: str(formData, "caption"),
     is_primary: formData.get("is_primary") === "on",
   });
   if (error) throw new Error(error.message);
+
   revalidatePath(`/admin/archive-items/${itemId}`);
+  revalidatePath(`/archive/${itemId}`);
   redirect(`/admin/archive-items/${itemId}`);
 }
 
 export async function deleteArchiveMedia(mediaId: string, itemId: string) {
   await requireEditor();
   const supabase = await createClient();
+
+  const { data: media } = await supabase.from("archive_media").select("storage_path").eq("id", mediaId).maybeSingle();
   const { error } = await supabase.from("archive_media").delete().eq("id", mediaId);
   if (error) throw new Error(error.message);
+
+  // Best-effort: the DB row is the source of truth for what's "deleted"
+  // from the archive's perspective, so a Storage cleanup failure here
+  // doesn't block the delete or get shown as an error — an orphaned
+  // file with no database row is invisible everywhere the app actually
+  // reads from (every read goes through archive_media, never lists the
+  // bucket directly), just wasted storage space, not a data-integrity
+  // or visibility problem.
+  if (media?.storage_path) {
+    await supabase.storage.from("archive-media").remove([media.storage_path]);
+  }
+
   revalidatePath(`/admin/archive-items/${itemId}`);
   redirect(`/admin/archive-items/${itemId}`);
 }

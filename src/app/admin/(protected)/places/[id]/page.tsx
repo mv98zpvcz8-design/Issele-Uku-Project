@@ -39,6 +39,11 @@ export default async function EditPlacePage({ params }: { params: Promise<{ id: 
           />
           <TextField name="latitude" label="Latitude" defaultValue={place.latitude?.toString()} />
           <TextField name="longitude" label="Longitude" defaultValue={place.longitude?.toString()} />
+          <TextField
+            name="cover_media_id"
+            label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
+            defaultValue={place.cover_media_id}
+          />
           <SelectField name="evidence_type" label="Evidence type" defaultValue={place.evidence_type} options={EVIDENCE_OPTIONS} />
           <SelectField
             name="confidence_level"

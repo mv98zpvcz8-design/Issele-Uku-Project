@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CopyrightNotice } from "@/components/archive/CopyrightNotice";
+import { ArchiveMediaGallery } from "@/components/archive/ArchiveMediaGallery";
 import { humanizeRecordType } from "@/lib/archive/labels";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -54,6 +55,14 @@ export default async function ArchiveItemPage({
     notFound();
   }
 
+  const supabase = await createClient();
+  const { data: media } = await supabase
+    .from("archive_media")
+    .select("*")
+    .eq("archive_item_id", item.id)
+    .order("is_primary", { ascending: false })
+    .order("created_at", { ascending: true });
+
   return (
     <Container className="max-w-3xl py-12 sm:py-16">
       <Link href="/archive" className="text-sm font-medium text-accent hover:underline">
@@ -72,8 +81,8 @@ export default async function ArchiveItemPage({
         {item.date_display && <span className="text-sm text-ink-soft">{item.date_display}</span>}
       </div>
 
-      <div className="mt-6 flex aspect-video items-center justify-center rounded-lg border border-dashed border-line bg-paper-muted">
-        <p className="text-sm text-ink-soft">No media attached to this record yet.</p>
+      <div className="mt-6">
+        <ArchiveMediaGallery media={media ?? []} itemTitle={item.title} />
       </div>
 
       {item.description && (

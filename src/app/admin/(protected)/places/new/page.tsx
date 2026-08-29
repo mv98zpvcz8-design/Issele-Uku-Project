@@ -19,6 +19,10 @@ export default async function NewPlacePage() {
           <TextAreaField name="historical_significance" label="Historical significance" />
           <TextField name="latitude" label="Latitude" />
           <TextField name="longitude" label="Longitude" />
+          <TextField
+            name="cover_media_id"
+            label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
+          />
           <SelectField name="evidence_type" label="Evidence type" options={EVIDENCE_OPTIONS} />
           <SelectField name="confidence_level" label="Confidence level" options={CONFIDENCE_OPTIONS} />
           <SelectField name="verification_status" label="Workflow status" options={STATUS_OPTIONS} />

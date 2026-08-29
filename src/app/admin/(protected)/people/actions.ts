@@ -26,6 +26,7 @@ function fieldsFromForm(formData: FormData) {
     death_date: String(formData.get("death_date") ?? "").trim() || null,
     associated_locations: parseListField(formData.get("associated_locations")),
     historical_period: String(formData.get("historical_period") ?? "").trim() || null,
+    image_media_id: String(formData.get("image_media_id") ?? "").trim() || null,
     evidence_type: String(formData.get("evidence_type") ?? "UNVERIFIED") as EvidenceType,
     confidence_level: String(formData.get("confidence_level") ?? "UNKNOWN") as ConfidenceLevel,
     verification_status: String(formData.get("verification_status") ?? "DRAFT") as ContentStatus,

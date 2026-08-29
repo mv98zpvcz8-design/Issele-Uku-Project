@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
+import { CoverImage } from "@/components/archive/CoverImage";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -76,6 +77,8 @@ export default async function PlacePage({ params }: { params: Promise<{ slug: st
       <Link href="/places" className="text-sm font-medium text-accent hover:underline">
         ← Back to places
       </Link>
+
+      <CoverImage mediaId={place.cover_media_id} alt={place.name} />
 
       <h1 className="mt-4 font-display text-3xl font-semibold text-ink sm:text-4xl">{place.name}</h1>
       {place.category && <p className="mt-1 capitalize text-ink-soft">{place.category}</p>}

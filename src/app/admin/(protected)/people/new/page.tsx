@@ -20,6 +20,10 @@ export default async function NewPersonPage() {
           <TextField name="death_date" label="Death date" type="date" />
           <ListField name="associated_locations" label="Associated locations" />
           <TextField name="historical_period" label="Historical period" />
+          <TextField
+            name="image_media_id"
+            label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
+          />
           <SelectField name="evidence_type" label="Evidence type" options={EVIDENCE_OPTIONS} />
           <SelectField name="confidence_level" label="Confidence level" options={CONFIDENCE_OPTIONS} />
           <SelectField name="verification_status" label="Workflow status" options={STATUS_OPTIONS} />

@@ -44,6 +44,11 @@ export default async function EditMonarchPage({ params }: { params: Promise<{ id
           <SelectField name="predecessor_id" label="Predecessor" defaultValue={monarch.predecessor_id ?? ""} options={monarchOptions} />
           <SelectField name="successor_id" label="Successor" defaultValue={monarch.successor_id ?? ""} options={monarchOptions} />
           <TextAreaField name="biography" label="Biography" defaultValue={monarch.biography} />
+          <TextField
+            name="image_media_id"
+            label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
+            defaultValue={monarch.image_media_id}
+          />
           <SelectField name="evidence_type" label="Evidence type" defaultValue={monarch.evidence_type} options={EVIDENCE_OPTIONS} />
           <SelectField
             name="confidence_level"
