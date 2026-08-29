@@ -547,3 +547,192 @@ where e.slug = 'aniocha-north-lga-created' and s.slug = 'aniocha-north-lga-offic
 insert into public.event_sources (event_id, source_id)
 select e.id, s.id from public.historical_events e, public.sources s
 where e.slug = 'issele-uku-technical-college-established' and s.slug = 'deltastate-technical-education-issele-uku-tech';
+
+-- ============================================================================
+-- THIRD ADDENDUM — a systematic pass across the broader Anioma/Enuani/
+-- Western Igbo region, not restricted to "Issele-Uku" as a search term,
+-- per an explicit request to widen the net. Two important honesty notes:
+--
+-- 1. WebSearch is a general web search tool, not an authenticated login to
+--    JSTOR/ProQuest/Scopus/Web of Science — those paywalled databases were
+--    not actually searched (this environment has no access to them). What
+--    follows comes from what a normal web search surfaces: Google Scholar-
+--    indexed results, ResearchGate/Academia.edu public paper pages, an
+--    open-access journal PDF (eajournals.org), a Wiley journal abstract,
+--    and public archive catalogue entries (UK National Archives, SOAS).
+--    Several of the academic-tier hits (a Wiley History Compass series, an
+--    open-access West African studies journal article) are a real step up
+--    in tier from the newspaper/community-site sourcing used elsewhere in
+--    this file, but still only relayed via search summary, same caveat as
+--    everything above.
+--
+-- 2. Most of what a region-wide search actually turns up is about the
+--    *Anioma region generally* (Asaba, Ubulu-Uku, the Ezechima dynasty
+--    controversy, the Enuani dialect) — not Issele-Uku specifically. Per
+--    this file's standing rule against misattribution, regional facts are
+--    recorded as regional, not dressed up as town-specific. Where a
+--    regional academic source directly strengthens an existing
+--    Issele-Uku-specific entry (the disputed founding narrative), it is
+--    linked to that entry as an additional source, not used to upgrade its
+--    confidence for the Issele-Uku-specific claim itself.
+-- ============================================================================
+
+insert into public.sources (slug, title, source_type, url, publisher, access_status, reliability_notes, verification_status) values
+(
+  'wikipedia-enuani-dialect',
+  'Enuani dialect',
+  'website',
+  'https://en.wikipedia.org/wiki/Enuani_dialect',
+  'Wikipedia',
+  'external_access',
+  'Names Issele-Uku ("Isseles") directly among the Enu-Ani dialect area''s communities, alongside Ibusa, Ogwashi-Uku, Asaba, and others — the one source in this addendum that is genuinely town-specific, not just regional.',
+  'REVIEW'
+),
+(
+  'researchgate-anioma-origin-identity',
+  'Interrogating the origin and identity of the Anioma of the Western Niger Delta of Nigeria',
+  'academic_paper',
+  'https://www.researchgate.net/publication/363325736_Interrogating_the_origin_and_identity_of_the_Anioma_of_the_Western_Niger_Delta_of_Nigeria',
+  'ResearchGate (publication host; original journal not confirmed via search summary)',
+  'external_access',
+  'An academic-tier paper directly addressing the Benin-origin-vs-Igbo-origin debate for the Anioma region generally, of which the Ezechima/Issele-Uku founding narrative is one instance. Relayed via search summary, not read directly — a reviewer with full access should confirm the paper''s actual journal/publication venue and read its argument in full before citing its conclusions.',
+  'REVIEW'
+),
+(
+  'eajournals-benin-factor-ubulu-ukwu',
+  'The Benin Factor in the West Niger Igbo History: The Example of Ubulu-Ukwu',
+  'academic_paper',
+  'https://eajournals.org/wp-content/uploads/The-Benin-Factor-in-the-West-Niger-Igbo-History-The-Example-of-Ubulu-Ukwu.pdf',
+  'European-American Journals (eajournals.org)',
+  'full_text_available',
+  'An open-access PDF appears directly available at this URL per search results — the strongest-access source in this addendum, though the file itself was not opened/read in this environment. Examines the same Benin-origin question via a neighbouring Anioma kingdom (Ubulu-Ukwu), not Issele-Uku itself.',
+  'REVIEW'
+),
+(
+  'wiley-chuku-igbo-historiography',
+  'Igbo historiography (series)',
+  'academic_paper',
+  'https://compass.onlinelibrary.wiley.com/doi/10.1111/hic3.12488',
+  'History Compass (Wiley)',
+  'metadata_only',
+  'A peer-reviewed academic journal (by Gloria Chuku) surveying Igbo historiography broadly, including the Benin-influence debate relevant to Anioma/West Niger Igbo communities. Paywalled — only the abstract/existence was confirmed via search, not the article text.',
+  'REVIEW'
+),
+(
+  'academia-benin-origin-controversy-eziorsu',
+  'The Benin Origin Controversy among the western Niger Igbo communities in Nigeria: A Case Study of Eziorsu Autonomous Community',
+  'academic_paper',
+  'https://www.academia.edu/144026831/The_Benin_Origin_Controversy_among_the_western_Niger_Igbo_communities_in_Nigeria_A_Case_Study_of_Eziorsu_Autonomous_Community',
+  'Academia.edu (self-archived paper)',
+  'external_access',
+  'A case study of the same type of Benin-origin dispute in a different western Niger Igbo community (Eziorsu, not Issele-Uku) — useful as evidence this is a well-documented pattern of contested founding narratives across the region, not evidence for Issele-Uku''s own case specifically.',
+  'REVIEW'
+),
+(
+  'nationalarchives-uk-benin-province-file',
+  'Nigeria: activities of the Benin/Delta Peoples'' Party (Colonial Office: West Africa Original Correspondence)',
+  'archival_record',
+  'https://beta.nationalarchives.gov.uk/catalogue/id/C566005',
+  'The National Archives (UK), Kew',
+  'restricted',
+  'A catalogue entry, not a read document — confirms a real archival file exists covering Benin Province-area political activity in the colonial period. Recorded here as a pointer for a future researcher with archive access, not as a source for any specific claim in this database.',
+  'REVIEW'
+),
+(
+  'cambridge-soas-nigeria-archives',
+  'Archives and Manuscripts in the School of Oriental and African Studies (SOAS) Library relating to Nigeria',
+  'academic_paper',
+  'https://www.cambridge.org/core/journals/african-research-and-documentation/article/abs/archives-and-manuscripts-in-the-school-of-oriental-and-african-studies-soas-library-relating-to-nigeria/2928514EADBD5EA5CA04C3EC26D2CA9F',
+  'African Research & Documentation (Cambridge Core)',
+  'metadata_only',
+  'A guide to SOAS''s Nigeria-related archival holdings (missionary, civil-service, and scholarly papers) — a pointer for future primary-source research, not itself a source for any specific claim here. Abstract only; paywalled.',
+  'REVIEW'
+);
+
+-- One culture entry that IS genuinely Issele-Uku-specific (the town is
+-- directly named in the source), plus one enrichment of the existing
+-- disputed founding-narrative event with the regional academic context
+-- found above.
+insert into public.culture_categories (slug, name, description, evidence_type, confidence_level, verification_status)
+values (
+  'enuani-dialect',
+  'Enuani (the Anioma Igbo dialect)',
+  'Enuani is one of the dialect groupings of the Anioma (Western Igbo) region of Delta State, spoken across communities including Ibusa, Ogwashi-Uku, Asaba, and Issele-Uku itself (named directly in sourcing) — distinct from the other regional groupings Ukwuani, Ika, and Aboh. Issele-Uku''s own relationship to Enuani is as one of its speaking communities, not a distinguishing feature unique to the town. Further detail on Issele-Uku''s own dialectal features specifically: research pending.',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'founding-of-issele-uku'
+  and s.slug in (
+    'researchgate-anioma-origin-identity',
+    'eajournals-benin-factor-ubulu-ukwu',
+    'wiley-chuku-igbo-historiography',
+    'academia-benin-origin-controversy-eziorsu'
+  );
+
+update public.historical_events
+set description = description || ' Widening the search beyond Issele-Uku specifically, the Benin-origin-versus-Igbo-origin question this founding narrative poses is a well-documented, actively studied pattern across the wider Anioma/West Niger Igbo region (see the linked academic sources on Ubulu-Ukwu, Eziorsu, and Igbo historiography generally) — this makes the underlying question a genuine scholarly debate, not an isolated or fringe claim, even though no source specific to Issele-Uku''s own case was found beyond the original community/tertiary accounts. The DISPUTED/LOW rating for this specific claim is unchanged: what is now better evidenced is that the dispute itself is real and regionally documented, not that Issele-Uku''s particular version of it has been confirmed.'
+where slug = 'founding-of-issele-uku';
+
+-- Further archival/bibliographic pointers found in the same widened pass —
+-- none of these are read in full (paywalled, archival-access-only, or a
+-- monograph this environment cannot open), so each is recorded as a
+-- pointer for a future researcher, not as a source for a specific claim.
+insert into public.sources (slug, title, source_type, url, publisher, access_status, reliability_notes, verification_status) values
+(
+  'ohadike-asaba-ibo-polity-1885',
+  'Historical Change in an Ibo Polity: Asaba to 1885',
+  'book',
+  'https://www.africabib.org/rec.php?RID=191581356',
+  'Publisher not confirmed via search summary',
+  'restricted',
+  'An academic historical monograph on Asaba (a neighbouring Anioma community, not Issele-Uku) up to 1885 — found via a bibliographic index (AfricaBib) and a library catalogue (AUC Library), not read directly. A strong-tier source in principle; recorded here as a research pointer.',
+  'REVIEW'
+),
+(
+  'dike-origins-niger-mission-1957',
+  'Origins of the Niger Mission, 1841-1891',
+  'book',
+  'https://anglicanhistory.org/africa/ng/dike_origins1957.html',
+  'K. Onwuka Dike (1957); hosted at anglicanhistory.org',
+  'full_text_available',
+  'A classic academic history of the Anglican Niger Mission (including Asaba, opened as a mission station in 1874) by a major Nigerian historian. Full text appears hosted at this URL per search results, though not opened directly in this environment.',
+  'REVIEW'
+),
+(
+  'cms-archive-niger-mission',
+  'Church Missionary Society Archive — Nigeria/Niger Mission papers, 1857-1934',
+  'archival_record',
+  'https://www.libraries.rutgers.edu/databases/church-missionary-society-archive',
+  'Church Missionary Society (archive hosted/indexed by multiple university libraries)',
+  'restricted',
+  'A large Anglican missionary archive covering the Niger Mission broadly (Asaba opened 1874) — a research pointer for the region''s Christian mission history generally, distinct from and not a source for this database''s existing Roman Catholic Diocese of Issele-Uku entry.',
+  'REVIEW'
+),
+(
+  'bodleian-royal-niger-company-papers',
+  'Papers of the Royal Niger Company',
+  'archival_record',
+  'https://archives.bodleian.ox.ac.uk/repositories/2/resources/2005',
+  'Bodleian Library, University of Oxford',
+  'restricted',
+  'Archival collection (1888-1930) confirming the Royal Niger Company''s documented administrative presence in the region during the period it operated from Asaba. A catalogue-level pointer, not read directly.',
+  'REVIEW'
+);
+
+insert into public.historical_events (slug, title, description, date_from, date_to, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'royal-niger-company-at-asaba',
+  'Royal Niger Company period at Asaba (regional context, not Issele-Uku specifically)',
+  'The Royal Niger Company, a British chartered company, was headquartered on the Niger at Asaba (a neighbouring Anioma town, not Issele-Uku) between approximately 1886 and 1900, before the Crown took over administration and established Native Courts across the Protectorate of Southern Nigeria in 1900. An earlier treaty was reportedly signed at Asaba on 30 August 1885 between the explorer William Balfour Baikie and a local chief. Recorded here as regional historical context for the colonial period immediately preceding the Ekumeku resistance movement (see that event) — no source found ties this specifically to Issele-Uku itself.',
+  '1885-08-30',
+  '1900-01-01',
+  'c. 1885–1900 (Asaba specifically; regional context)',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'royal-niger-company-at-asaba'
+  and s.slug in ('ohadike-asaba-ibo-polity-1885', 'bodleian-royal-niger-company-papers');
