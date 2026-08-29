@@ -74,7 +74,7 @@ Not yet done, tracked as follow-ups rather than silently skipped: a nonce-based 
 Also closed three real, pre-existing cross-link gaps found while auditing what already connects to what: the historical event page now shows its own linked archive items (the join table existed since Phase 5, nothing queried it there); a source's page now shows what cites it ("Cited by": events/places/people/monarchs — previously only the reverse direction existed); a person's page now shows associated places and events (both join tables existed since Phase 4, neither was surfaced). See DECISIONS.md D-037.
 
 ## Phase 10 — Pre-Palace Review
-⏳ PRE_PALACE_REVIEW.md checklist completed and verified before any stakeholder demo.
+✅ `PRE_PALACE_REVIEW.md` written — content, technical, security, framing, and honesty checks, a known-gaps list to disclose proactively rather than hide, a suggested demo walkthrough order, and a sign-off section. This is inherently a checklist for the project owner to personally work through, not something that can be marked complete by having been written — no item on it should be considered checked until the project owner has actually verified it themselves. One item was already caught while writing it: `/contact`'s email is still the `contact@example.org` placeholder and needs a real address before any demo.
 
 ---
 
