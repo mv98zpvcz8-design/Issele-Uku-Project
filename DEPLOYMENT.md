@@ -64,10 +64,15 @@ and whether it's public or secret. None of that has come up yet.
 
 ## Database environments
 
+**Status: connected.** A live Supabase project exists, the full schema
+is applied, custom SMTP is configured, and the first ADMIN account has
+signed in successfully end-to-end. The steps below are kept as a
+reference for setting up a future second environment (e.g. a dedicated
+Preview project) or for anyone rebuilding this from scratch, not as an
+outstanding task.
+
 The schema (`supabase/migrations/`) and demo seed data
-(`supabase/seed.sql`) are built and validated (see DATABASE.md), but no
-live Supabase project is connected yet — that step needs you, since it
-requires a Supabase account.
+(`supabase/seed.sql`) are built and validated (see DATABASE.md).
 
 **One free-tier Supabase project is enough to start** (a single project
 can serve both Preview and Production for now, since there's no real
@@ -100,8 +105,10 @@ creating it, per the cost-control rule.
 5. For local development, copy `.env.example` to `.env.local` and fill in the same three values (`.env.local` is already git-ignored).
 6. **Auth setup for the admin sign-in (Phase 6):** the admin area uses passwordless magic-link sign-in. In the Supabase dashboard, go to **Authentication → URL Configuration** and set:
    - **Site URL** to your deployed site's URL (e.g. `https://issele-uku-project.vercel.app`, or your custom domain once set up).
-   - **Redirect URLs**: add `<your-site-url>/auth/callback` (and, for local dev, `http://localhost:3000/auth/callback`) — Supabase rejects a magic-link redirect to any URL not on this list.
-7. **Create the first staff account.** Every new Supabase Auth user automatically gets a `profiles` row defaulting to the `RESEARCHER` role (least privilege — see DECISIONS.md D-026's neighboring migration). To get your first `ADMIN`: have that person sign in once via `/admin/login` (this creates their `auth.users`/`profiles` rows), then, in the Supabase dashboard's SQL editor, run:
+   - **Redirect URLs**: add `<your-site-url>/auth/callback` (and, for local dev, `http://localhost:3000/auth/callback`) — Supabase rejects a magic-link redirect to any URL not on this list. If your app builds the redirect with extra query parameters (this one does: `?next=/admin`), add a wildcard entry too (`<your-site-url>/auth/callback**`) rather than only the exact path, or Supabase's allow-list match can fail on the query string and silently fall back to the Site URL instead — a genuinely confusing failure mode to debug from the symptom alone (see DECISIONS.md D-033).
+   - **Double-check `NEXT_PUBLIC_SITE_URL` in Vercel has no trailing whitespace/newline** if you're pasting it from somewhere — see D-033. A trailing newline produces the exact same "silently falls back to Site URL" symptom as the wildcard issue above, and is easy to miss since the value *looks* correct at a glance.
+7. **Custom SMTP for auth emails — required almost immediately.** Supabase's built-in email sender has a very low hourly cap (fine for one smoke-test sign-in, not for real use) and gives no useful error back to the app when exhausted — the sign-in form just shows a generic "something went wrong." Before relying on magic-link sign-in for real work: pick a transactional email provider (Resend and Brevo both have a free tier sufficient for a small admin team), and in **Authentication → SMTP Settings**, enable custom SMTP with that provider's host/port/username/password. **Note if using Resend without a verified sending domain:** its default `onboarding@resend.dev` sender can only deliver to the email address the Resend account itself was signed up with — verify a real domain (or use an address on one) before inviting a second staff member, or their sign-in emails will silently fail to send.
+8. **Create the first staff account.** Every new Supabase Auth user automatically gets a `profiles` row defaulting to the `RESEARCHER` role (least privilege — see DECISIONS.md D-026's neighboring migration). To get your first `ADMIN`: have that person sign in once via `/admin/login` (this creates their `auth.users`/`profiles` rows), then, in the Supabase dashboard's SQL editor, run:
    ```sql
    update public.profiles set role = 'ADMIN' where id = (
      select id from auth.users where email = 'their-email@example.com'

@@ -59,7 +59,9 @@ No new migration was needed — the `submissions` table, its CHECK constraint, a
 Not yet done, tracked as follow-ups rather than silently skipped: a nonce-based Content-Security-Policy (D-032); a manual screen-reader pass with a real tool (VoiceOver/NVDA) rather than code review alone; a Lighthouse/axe run once a live deployment is stable enough to point them at.
 
 ## Phase 9 — Deployment
-⏳ Vercel deployment configuration and documentation. Supabase project setup instructions. Backup/export strategy documented.
+✅ The live Supabase project is connected end-to-end: schema applied, environment variables set in Vercel, custom SMTP (Resend) configured for auth emails, and the first ADMIN account has signed in and been verified against a real deployment (not just local testing) — dashboard loads, list pages load, role shows correctly. DEPLOYMENT.md updated throughout to describe this as the current state rather than a future task, plus two real gotchas hit and fixed during the connection itself: a Supabase redirect-URL allow-list mismatch on query strings, and a trailing-newline environment variable value that produced an identical-looking symptom (see DECISIONS.md D-033) — both now documented inline in the setup steps so a future reconnection doesn't lose an hour to the same two things. Backup/export strategy was already documented (see DEPLOYMENT.md's "Backup and data portability"); not yet actually run once against the live project, since there's no real content in it yet worth backing up.
+
+**Still open, deliberately not decided unilaterally:** whether/when to apply `supabase/seed.sql` (demo data) and `supabase/real_content.sql` (real, web-researched content, still at `REVIEW` status) to the now-live project — this is a content decision for the project owner, not a technical blocker.
 
 ## Phase 10 — Pre-Palace Review
 ⏳ PRE_PALACE_REVIEW.md checklist completed and verified before any stakeholder demo.
