@@ -5,6 +5,7 @@ import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { StateNotice, NOT_CONNECTED_NOTICE, LOAD_ERROR_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
+import { sortEventsChronologically } from "@/lib/timeline/sort";
 
 export const metadata: Metadata = {
   title: "History",
@@ -40,13 +41,13 @@ export default async function HistoryPage() {
 
 async function EventList() {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("historical_events")
-    .select("*")
-    .order("date_from", { ascending: true, nullsFirst: false })
-    .order("title", { ascending: true });
+  const { data: fetched, error } = await supabase.from("historical_events").select("*");
 
   if (error) return <StateNotice variant="error" {...LOAD_ERROR_NOTICE} />;
+
+  // See lib/timeline/sort.ts: date_from/date_exact need coalescing, which
+  // .order() can't express as a plain column sort.
+  const data = fetched ? sortEventsChronologically(fetched) : fetched;
 
   if (!data || data.length === 0) {
     return (

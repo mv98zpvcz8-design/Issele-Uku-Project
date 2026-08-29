@@ -1,4 +1,8 @@
-import type { EvidenceType } from "@/lib/supabase/types";
+// Relative imports, not the "@/" alias: this module (and its .test.ts)
+// runs under plain `node --test` outside Next's bundler, which has no
+// knowledge of the tsconfig path alias.
+import type { EvidenceType } from "../supabase/types.ts";
+import { buildOrSearchFilter } from "../postgrest.ts";
 
 /**
  * Matches the ARCHIVE section of the project brief. Deliberately a plain
@@ -85,26 +89,11 @@ export function parseArchiveSearchParams(sp: RawSearchParams): ArchiveFilters {
   };
 }
 
-/**
- * PostgREST's `.or()` filter takes a raw string you build yourself, where
- * comma/period/parenthesis are structurally significant (they separate
- * and group conditions). A search term containing one of those characters
- * would otherwise be interpreted as filter syntax rather than a literal
- * value — e.g. a user searching for "market, 1950" could smuggle in an
- * unintended extra condition. Per PostgREST's documented escaping rule,
- * wrapping the value in double quotes (with `\` and `"` themselves
- * backslash-escaped) makes everything inside it literal.
- */
-export function escapePostgrestOrValue(value: string): string {
-  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
-}
-
 const SEARCH_COLUMNS = ["title", "subtitle", "description", "abstract", "source_name"] as const;
 
 /** Builds the `.or(...)` filter string for a free-text archive search. */
 export function buildArchiveSearchFilter(q: string): string {
-  const pattern = escapePostgrestOrValue(`%${q}%`);
-  return SEARCH_COLUMNS.map((col) => `${col}.ilike.${pattern}`).join(",");
+  return buildOrSearchFilter(SEARCH_COLUMNS, q);
 }
 
 export function archiveOffset(filters: Pick<ArchiveFilters, "page">): number {

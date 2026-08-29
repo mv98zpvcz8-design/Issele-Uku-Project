@@ -377,6 +377,11 @@ interface PublicTables {
         Insert: { archive_item_id: string; category_id: string };
         Update: never;
       };
+      event_archive_items: {
+        Row: { event_id: string; archive_item_id: string };
+        Insert: { event_id: string; archive_item_id: string };
+        Update: never;
+      };
 }
 
 export interface Database {

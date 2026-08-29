@@ -156,6 +156,28 @@ insert into public.historical_events (
 insert into public.event_people (event_id, person_id) values
   ('00000000-0000-0000-0004-000000000001', '00000000-0000-0000-0002-000000000001');
 
+-- Link the demo event to a demo archive record, so the timeline's
+-- "link to relevant archive records" behaviour has something to show.
+insert into public.event_archive_items (event_id, archive_item_id)
+select '00000000-0000-0000-0004-000000000001', ai.id
+from public.archive_items ai
+where ai.slug = 'sample-documented-record';
+
+-- A second demo event with an actual date range (rather than only an
+-- unparseable "date uncertain" string), so the timeline demonstrates
+-- both uncertain dates and date ranges, and so it has more than one
+-- entry to sort chronologically.
+insert into public.historical_events (
+  slug, title, description, date_from, date_to, date_display,
+  evidence_type, confidence_level, verification_status
+) values (
+  'sample-event-range',
+  '[SAMPLE] Demo period of change',
+  'A fictional second event, given an actual date range rather than an exact date, to demonstrate how the timeline orders and displays uncertain/ranged dates.',
+  '1920-01-01', '1935-12-31', 'c. 1920s–1930s (demo record)',
+  'INTERPRETATION', 'MEDIUM', 'PUBLISHED'
+);
+
 -- A demo monarch entry (fictional name, clearly not a real Obi), showing
 -- the reign_display pattern for an uncertain reign period.
 insert into public.monarchs (

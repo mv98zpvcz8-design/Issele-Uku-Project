@@ -2,7 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   parseArchiveSearchParams,
-  escapePostgrestOrValue,
   buildArchiveSearchFilter,
   archiveOffset,
   ARCHIVE_PAGE_SIZE,
@@ -54,21 +53,6 @@ test("archiveOffset: page 1 starts at 0", () => {
 
 test("archiveOffset: page 3 skips two full pages", () => {
   assert.equal(archiveOffset({ page: 3 }), ARCHIVE_PAGE_SIZE * 2);
-});
-
-test("escapePostgrestOrValue: wraps in quotes", () => {
-  assert.equal(escapePostgrestOrValue("hello"), '"hello"');
-});
-
-test("escapePostgrestOrValue: escapes embedded double quotes", () => {
-  assert.equal(escapePostgrestOrValue('say "hi"'), '"say \\"hi\\""');
-});
-
-test("escapePostgrestOrValue: escapes backslashes before quoting quotes (order matters)", () => {
-  // If quotes were escaped before backslashes, the backslash just added
-  // by escaping the quote would itself get doubled — this pins the
-  // correct order (backslashes first).
-  assert.equal(escapePostgrestOrValue('a\\"b'), '"a\\\\\\"b"');
 });
 
 test("buildArchiveSearchFilter: a comma/period in the search term cannot inject an extra OR condition", () => {

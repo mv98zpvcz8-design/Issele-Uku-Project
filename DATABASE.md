@@ -385,8 +385,19 @@ Rather than forcing every historical date into a single `date` column
 use three columns: `date_exact` (when a precise date is known),
 `date_from`/`date_to` (for a known range or margin of uncertainty), and
 `date_display` (the human-readable string actually shown to visitors,
-e.g. "c. 1897", "1920s", "before 1950"). The timeline (Phase 5) sorts by
-`date_from`/`date_exact` but always renders `date_display`.
+e.g. "c. 1897", "1920s", "before 1950"). The timeline and History listing
+(Phase 5) always render `date_display`, but sort chronologically by
+`coalesce(date_from, date_exact)` — computed client-side in
+`src/lib/timeline/sort.ts` rather than via PostgREST `.order()`, since
+`date_from` and `date_exact` are alternative ways of expressing a known
+date (an event normally has one or the other) and chaining
+`.order('date_from').order('date_exact')` cannot express a coalesce — it
+would put any event with only `date_exact` set entirely after every event
+with any `date_from`, however much later those actually are. Caught
+during the Phase 5 audit; see DECISIONS.md.
+
+### `event_archive_items`
+Join table `(event_id, archive_item_id)` — links a historical event to relevant archive records (photographs, documents, recordings), so the timeline and History detail page can show "view record" links. Same RLS pattern as every other join table.
 
 ## Export / data portability
 
