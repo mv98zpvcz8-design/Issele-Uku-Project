@@ -41,6 +41,18 @@ export function Header() {
 
         <div className="flex items-center gap-1">
           <Link
+            href="/search"
+            aria-label="Search"
+            title="Search"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 text-ink-soft transition-colors hover:text-accent"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.75" />
+              <path d="M20 20l-4.35-4.35" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+            </svg>
+          </Link>
+
+          <Link
             href="/admin/login"
             aria-label="Staff sign-in"
             title="Staff sign-in"
