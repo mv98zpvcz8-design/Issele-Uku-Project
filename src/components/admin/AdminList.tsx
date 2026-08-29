@@ -27,7 +27,10 @@ export function AdminList<T extends { id: string }>({
 }) {
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link href="/admin" className="text-sm text-ink-soft hover:text-accent">
+        ← Dashboard
+      </Link>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl font-semibold text-ink">{title}</h1>
         {canEdit && (
           <Link
