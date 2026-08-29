@@ -91,3 +91,13 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Printing a record (e.g. a Research Library citation) should show just
+   the record, not the site chrome around it. */
+@media print {
+  header,
+  footer,
+  [data-print-hide] {
+    display: none !important;
+  }
+}

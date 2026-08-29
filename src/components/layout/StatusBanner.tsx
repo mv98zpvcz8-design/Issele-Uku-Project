@@ -9,7 +9,7 @@ import { Container } from "./Container";
  */
 export function StatusBanner() {
   return (
-    <div className="border-b border-line bg-paper-muted">
+    <div data-print-hide className="border-b border-line bg-paper-muted">
       <Container className="flex flex-col gap-1 py-2.5 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-center sm:gap-2 sm:text-center">
         <p>
           An independent digital heritage initiative currently under

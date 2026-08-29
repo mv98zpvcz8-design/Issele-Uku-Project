@@ -736,3 +736,568 @@ insert into public.event_sources (event_id, source_id)
 select e.id, s.id from public.historical_events e, public.sources s
 where e.slug = 'royal-niger-company-at-asaba'
   and s.slug in ('ohadike-asaba-ibo-polity-1885', 'bodleian-royal-niger-company-papers');
+
+-- ============================================================================
+-- FOURTH ADDENDUM — built from a research dossier the project owner supplied
+-- (compiled by a separate research process, not by this environment's own
+-- WebSearch). CRITICAL PROVENANCE NOTE, stated as plainly as possible:
+-- none of the archival items below (National Archives of Nigeria case files,
+-- Bodleian/SOAS/CMS/Kew/British Library/Cambridge/Library of Congress
+-- holdings) were independently verified by re-searching or opening them in
+-- this environment. They are recorded here exactly as the supplied dossier
+-- described them — shelfmarks, case numbers and catalogue URLs included —
+-- as a bibliography of real, checkable research leads, not as confirmed
+-- content. Every one lands at REVIEW like everything else in this file, and
+-- several carry an explicit note that even the dossier itself could not
+-- confirm a detail (e.g. an exact date discrepancy on the Vaux Intelligence
+-- Report). A person with real archive access should treat this as a
+-- prioritised reading list, not a finished citation set.
+--
+-- Two genuinely new, directly citable facts (not requiring anyone to have
+-- read an unread archival file) came out of this pass and are added as real
+-- content below: named components of the Ine Aho festival from a 2018
+-- interview with the Obi, and a Civil War-era trade route from a
+-- peer-reviewed article's own oral-history fieldwork. A third addition is
+-- not new content but a methodological correction: the widely-repeated
+-- "1230 AD, founded by Prince Uwadiaie" narrative appears traceable to one
+-- specific 1992 local history book, not to independent corroboration —
+-- important enough to state explicitly on the existing founding-narrative
+-- entry.
+-- ============================================================================
+
+insert into public.sources (slug, title, source_type, url, publisher, access_status, reliability_notes, verification_status) values
+-- National Archives of Nigeria — town-specific Native/Clan Court files
+(
+  'nai-petition-elders-vs-obi',
+  'Elders of Issele-Uku — Petition Against the Obi for Mismanagement of Affairs in the Town',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/elders-of-issele-uku-petition-by-against-the-obi-for-mismanagement-of-affairs-in-the-town',
+  'National Archives of Nigeria',
+  'restricted',
+  'Catalogue entry only — no date or full archival reference is exposed on the online listing per the supplied dossier. If real, this would be an unusually direct primary record of internal town political conflict; the file itself has not been read or its existence independently re-confirmed by this environment. Request full reference and extent before relying on it for anything.',
+  'REVIEW'
+),
+(
+  'nai-case-23-1934-onweazu',
+  'Issele-Uku Native Court Criminal Case No. 23/1934 (Native Court v. Onweazu)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/onweazu-m-of-issele-uku-petition-by-re-issele-uku-native-court-criminal-case-no-23-1934-native-court-versus-onweazu-c-m-of-issele-uku-2',
+  'National Archives of Nigeria',
+  'restricted',
+  'A named criminal case from Issele-Uku''s own Native Court, 1934, per catalogue listing. Not read — a research pointer for reconstructing colonial-era customary law and named residents, not a source for any specific claim in this database yet.',
+  'REVIEW'
+),
+(
+  'nai-case-11-37-adinmaolo',
+  'Issele-Uku Native Court Civil Case No. 11/37 (Adinmaolo petition)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/adinmaolo-m-of-issele-uku-petition-by-re-issele-uku-native-court-civil-case-no-11-37',
+  'National Archives of Nigeria',
+  'restricted',
+  'A named 1937 civil dispute from Issele-Uku''s Native Court per catalogue listing. Not read.',
+  'REVIEW'
+),
+(
+  'nai-case-100-49-nkiti-odogwu',
+  'Application for D.O.''s Review Order, Case No. 100/49 (Nkiti v. I. A. Odogwu of Issele-Uku)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/application-for-d-os-review-order-case-no-100-49-nkiti-versus-i-a-odogwu-of-issele-uku%3Bisad?sf_culture=en',
+  'National Archives of Nigeria',
+  'restricted',
+  'A 1949 District Officer review of a local dispute, per catalogue listing — useful in principle for how colonial administration supervised Native Court decisions. Not read.',
+  'REVIEW'
+),
+(
+  'nai-case-64-31-ikenwa',
+  'Issele-Uku Native Court Civil Case No. 64/31 (Okwufuflueze v. Ikenwa)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/mr-j-i-ikenwa-m-of-issele-uku-petition-by-re-issele-uku-native-court-civil-case-number-64-31-ukwufuflueze-f-of-issele-versus-ikenwa-m-of',
+  'National Archives of Nigeria',
+  'restricted',
+  'A 1931 civil case naming a female litigant (Okwufuflueze) — per catalogue listing, potentially relevant to women''s property/marriage/litigation history in colonial Issele-Uku. Not read; a name spelling difference between the petition title and the versus-line in the dossier''s own transcription should be checked against the original file, not assumed.',
+  'REVIEW'
+),
+(
+  'nai-case-212-32-chianu',
+  'Issele-Uku Native Court Civil Case No. 212/32 (Chianu v. Nwabuokei)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/issele-uku-native-court-civil-case-number-212-32-chianu-f-of-issele-uku-versus-john-nwabuokei-m-of-issele-uku-and-vice-versa',
+  'National Archives of Nigeria',
+  'restricted',
+  'A 1932 civil case naming a female litigant, per catalogue listing. Not read.',
+  'REVIEW'
+),
+(
+  'nai-ezechima-clan-court-8-38',
+  'Ezechima Clan Court Criminal Case No. 8/38 (Nwabuje of Issele-Uku v. Obeleke and Okolie of Onicha-Ugbo)',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/obeleke-m-of-oni-cha-ugbo-petition-by-re-ezechima-clan-court-crim-case-no-8-38-nwabuje-m-of-issele-uku-versus-1-obeleke-m-and-2-okolie-m',
+  'National Archives of Nigeria',
+  'restricted',
+  'Per catalogue listing, a 1938 case in the Ezechima Clan Court naming parties from both Issele-Uku and Onicha-Ugbo — if accurate, real documentary evidence of an inter-community clan-court structure linking the two. Not read or independently confirmed.',
+  'REVIEW'
+),
+(
+  'nai-case-15-54-appeal',
+  'District Officer''s Appeal Court Case No. 15/54 (Ikeduba of Ogbentu Issele-Uku v. Okolie Odoh of Ogbidibo)',
+  'archival_record',
+  'https://www.nationalarchivesofnigeria.org/index.php/application-from-okolie-odolu-m-for-district-officers-appeal-court-case-no-15-54-ikeduba-and-one-othr-of-ogbentu-issele-uku-vs-okolie-odoh-odoh-m-of-ogbidibo?sf_culture=en',
+  'National Archives of Nigeria',
+  'restricted',
+  'A 1954 appeal naming two of Issele-Uku''s own traditional quarters (Ogbentu, Ogbidibo) per catalogue listing — of interest since this database already has separate place records for the ten traditional quarters (Wikipedia-sourced) but "Ogbentu" does not match any of those ten names exactly, worth checking against the original file. Not read.',
+  'REVIEW'
+),
+(
+  'nai-vaux-asaba-intelligence-report-1934',
+  'Vaux, H. — Intelligence Report on Asaba Clan, Asaba Division, Benin Province',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/index.php/intelligence-report-on-asaba-clan-asaba-division-benin-province-1934-by-h-vaux-assistant-district-officer',
+  'National Archives of Nigeria',
+  'restricted',
+  'A foundational-type colonial intelligence report for the administrative division surrounding Issele-Uku. The supplied dossier itself flags an unresolved date discrepancy: NAI''s own catalogue says 1934, while at least one scholarly citation (Isichei) dates a Vaux Asaba report to 1936 — recorded here exactly as an open discrepancy, not resolved by guessing.',
+  'REVIEW'
+),
+(
+  'nai-simpson-akumazi-intelligence-report-1935',
+  'Simpson, J. M. — Intelligence Report on Akumazi Clan, Agbor District, Asaba Division, Benin Province',
+  'archival_record',
+  'https://nationalarchivesofnigeria.org/',
+  'National Archives of Nigeria',
+  'restricted',
+  'A neighbouring-clan intelligence report (1935) in the same administrative division as Issele-Uku, useful for comparison — not itself about Issele-Uku. Catalogue URL is the archive''s general search page, not a direct item link, per the supplied dossier.',
+  'REVIEW'
+),
+(
+  'nln-southern-nigeria-annual-report-1908',
+  'Annual Report of the Colony of Southern Nigeria for the Year 1908',
+  'archival_record',
+  'https://nigeriareposit.nln.gov.ng/items/0684bc38-1cc6-4bec-abb4-b749d0a797fb',
+  'National Repository of Nigeria / National Library of Nigeria',
+  'full_text_available',
+  'A digitised official annual report for the whole Southern Nigeria protectorate, pre-dating Issele-Uku-specific administrative detail — broad period context only, per the supplied dossier.',
+  'REVIEW'
+),
+(
+  'nml-ethnographic-survey-ibo-1936-1945',
+  'International African Institute — Ethnographic Survey: Draft Section of the Ibo Speaking Peoples of Southern Nigeria',
+  'archival_record',
+  'https://lagosmuseumarchives.ng/intelligence_reports/general_topics',
+  'National Museum Lagos Library and Archives',
+  'full_text_available',
+  'Per the supplied dossier, covers Northern/Western/Eastern Ibo classification generally (1936-1945) — relevant to the wider Western Igbo/Enuani area, not Issele-Uku specifically. The museum''s digital archive states a CC BY-NC-ND 4.0 licence on its published items, per the dossier.',
+  'REVIEW'
+),
+(
+  'nml-native-festivals-calendar-1941-1945',
+  'Native Festivals Calendar, 1941-1945',
+  'archival_record',
+  'https://lagosmuseumarchives.ng/intelligence_reports/general_topics',
+  'National Museum Lagos Library and Archives',
+  'full_text_available',
+  'Per the supplied dossier''s catalogue description, correspondence recording native festivals of Igbo clan communities where schools were located — worth checking specifically for Issele-Uku/Ezechima/Aniocha entries, not yet confirmed to mention the town.',
+  'REVIEW'
+),
+(
+  'loc-pilgrim-baptist-mission-issele-uku',
+  'National Baptist Convention, U.S.A., Foreign Mission Board Records — "Pilgrim Baptist Mission, Issele-Uku, Nigeria, 1958-1959"',
+  'archival_record',
+  'https://findingaids.loc.gov/repositories/19/archival_objects/4966031',
+  'Library of Congress, Manuscript Division',
+  'restricted',
+  'A folder explicitly titled with Issele-Uku''s own name, Box 1 per the supplied dossier''s finding-aid reference — a genuinely town-specific primary-source target for a Baptist mission presence not otherwise represented in this database (the diocese entries here are Roman Catholic). Not read; existence not independently re-confirmed by this environment.',
+  'REVIEW'
+),
+(
+  'bodleian-asaba-division-annual-report-1947',
+  'Cohen — Annual Report on Asaba Division, 1947',
+  'archival_record',
+  'https://archives.bodleian.ox.ac.uk/',
+  'Bodleian Library, University of Oxford (former Rhodes House African collections)',
+  'restricted',
+  'Per the supplied dossier, shelfmark MSS. Afr. 727 h, cited by the scholar Elizabeth Isichei. A divisional annual report that would in principle cover Issele-Uku as part of Asaba Division — not read, shelfmark not independently re-verified by this environment.',
+  'REVIEW'
+),
+(
+  'bodleian-oxfam-refugee-resettlement-1969',
+  'Oxfam — Nigeria: equipment for resettlement of refugees in Ibusa and Asaba, 1969-1971',
+  'archival_record',
+  'https://archives.bodleian.ox.ac.uk/repositories/2/archival_objects/780081',
+  'Bodleian Library, University of Oxford (Oxfam Project Files)',
+  'restricted',
+  'Post-Civil-War humanitarian documentation for neighbouring Anioma communities (Ibusa, Asaba — not Issele-Uku itself), per the supplied dossier. Shelfmark given as MS. Oxfam PRF NIG 042.',
+  'REVIEW'
+),
+(
+  'soas-henry-lyon-papers',
+  'Lyon, Henry — Journal and Papers',
+  'archival_record',
+  'https://archives.soas.ac.uk/records/MS_380402',
+  'SOAS University of London',
+  'restricted',
+  'Personal colonial papers (1897-1917) of an officer in the Niger Coast Protectorate/Benin City administration, per the supplied dossier — regional colonial-administration context, not about Issele-Uku specifically. Shelfmark MS 380402.',
+  'REVIEW'
+),
+(
+  'cms-macaulay-report-asaba-1889',
+  'Macaulay, H. S. — Report on Asaba, 31 December 1889',
+  'archival_record',
+  'https://churchmissionsociety.org/library-and-archives/church-mission-society-archives/',
+  'Church Missionary Society, Niger Mission (Cadbury Research Library, University of Birmingham)',
+  'restricted',
+  'A near-contemporary Anglican mission report on Asaba (not Issele-Uku), identified via the scholar Elizabeth Isichei''s own archival footnotes per the supplied dossier. Reference given as Niger Mission 1890/29.',
+  'REVIEW'
+),
+(
+  'cms-phillips-crowther-correspondence-1875',
+  'Phillips to Crowther, 8 October 1875',
+  'archival_record',
+  'https://churchmissionsociety.org/library-and-archives/church-mission-society-archives/',
+  'Church Missionary Society Niger Mission correspondence (Cadbury Research Library)',
+  'restricted',
+  'Early Anglican missionary correspondence in the lower Niger/Asaba area, per the supplied dossier (citing Isichei). Reference given as CA3/031. Not about Issele-Uku specifically.',
+  'REVIEW'
+),
+(
+  'cms-crowther-niger-mission-report-1880',
+  'Crowther, Samuel Ajayi — Report for 1880',
+  'archival_record',
+  'https://churchmissionsociety.org/library-and-archives/church-mission-society-archives/',
+  'Church Missionary Society Niger Mission (Cadbury Research Library)',
+  'restricted',
+  'Bishop Crowther''s own Niger Mission reporting for 1880, per the supplied dossier (citing Isichei). Reference given as G3A3/01.',
+  'REVIEW'
+),
+(
+  'sma-zappa-letter-1888',
+  'Zappa, Carlo — letter to Superior General, 4 October 1888',
+  'archival_record',
+  '',
+  'Société des Missions Africaines Archives, Rome',
+  'restricted',
+  'A Catholic missionary letter from the same year the Diocese of Issele-Uku''s own retrospective history dates the first Mass in the wider diocesan territory (5 March 1888) — potentially useful corroboration of that date, per the supplied dossier (citing Isichei). Reference given as 14/80302 15829. No public URL available; contact the SMA archive directly.',
+  'REVIEW'
+),
+(
+  'tna-co592-southern-nigeria-annual-reports',
+  'Colonial Office and successors — Annual Reports (Southern Nigeria), CO 592 series',
+  'archival_record',
+  'https://discovery.nationalarchives.gov.uk/details/r/C11669495',
+  'The National Archives (UK), Kew',
+  'restricted',
+  'A systematic administrative-reporting series for Southern Nigeria, especially 1906-1913 per the supplied dossier — a route to context, not an Issele-Uku-specific item.',
+  'REVIEW'
+),
+(
+  'bl-western-region-map-1957',
+  'Survey Department, Western Region, Nigeria — Outline Map of Nigeria, Western Region',
+  'map',
+  'https://searcharchives.bl.uk/',
+  'British Library',
+  'restricted',
+  'A 1957 map of Nigeria''s Western Region, useful for placing Issele-Uku in its pre-Mid-West-Region administrative/transport landscape, per the supplied dossier. Shelfmark given as IOR/X/14724.',
+  'REVIEW'
+),
+(
+  'cambridge-cms-photo-asaba-1962',
+  'Church Missionary Society Photograph Collection — "Fish from ponds, Asaba Rural Training College"',
+  'photograph',
+  'https://archivesearch.lib.cam.ac.uk/repositories/2/archival_objects/171069',
+  'Cambridge University Library',
+  'restricted',
+  'A dated 1962 photograph from the Asaba (not Issele-Uku) educational/mission environment, per the supplied dossier. Reference given as GBR/0115/RCS/CMS/10/3/45.',
+  'REVIEW'
+),
+(
+  'guardian-2017-engineer-king',
+  'Omohinmin, Gabriel — "The Making of a ''Special Engineer King'' in Issele-Uku"',
+  'newspaper',
+  'https://guardian.ng/sunday-magazine/the-making-of-a-special-engineer-king-in-issele-uku/',
+  'The Guardian Nigeria',
+  'external_access',
+  'Detailed 2017 contemporary coverage of Obi Nduka Ezeagwuna''s accession, per the supplied dossier — notes this covers the modern monarchy specifically; any older historical-origin claims repeated within the article still need independent evidence of their own, same standard as everywhere else in this file.',
+  'REVIEW'
+),
+(
+  'punch-2017-obi-interview',
+  'Okpare, Ovie (interviewer) — "At first, I was embarrassed to see elders bow before me – 25-year-old Obi of Issele-Uku"',
+  'newspaper',
+  'https://punchng.com/at-first-i-was-embarrassed-to-see-elders-bow-before-me-25-year-old-obi-of-issele-uku/',
+  'The Punch',
+  'external_access',
+  'A direct 2017 interview with the reigning Obi, per the supplied dossier — statements attributable to him personally on accession and cultural preservation goals.',
+  'REVIEW'
+),
+(
+  'vanguard-2018-ine-aho-components',
+  '"Culture, traditional heritage our pride — Issele Uku Monarch"',
+  'newspaper',
+  'https://www.vanguardngr.com/2018/09/culture-traditional-heritage-our-pride-issele-uku-monarch/',
+  'Vanguard News',
+  'external_access',
+  'A 2018 article in which the Obi names specific component activities of the Ine Aho festival (Izu Afiachi, Ilo Chi Ikpala, Ilo Chi Ikolo, Mgba Ututu, Iba Nzu, Ihu Onicha), per the supplied dossier — used directly to enrich the existing Ine Aho culture entry below.',
+  'REVIEW'
+),
+(
+  'thisday-2019-inne-festival-programme',
+  '"Issele Uku Plan Inne Festival to Showcase Obi Nduka"',
+  'newspaper',
+  'https://www.thisdaylive.com/2019/08/31/issele-uku-plan-inne-festival-to-showcase-obi-nduka/',
+  'THISDAY',
+  'external_access',
+  'A 2019 article giving a detailed programme for that year''s festival, including reported diaspora participation, per the supplied dossier.',
+  'REVIEW'
+),
+-- Academic secondary sources
+(
+  'ohadike-anioma-social-history-1994',
+  'Ohadike, Don C. — Anioma: A Social History of the Western Igbo People',
+  'book',
+  'https://archive.org/details/aniomasocialhist0000ohad',
+  'Ohio University Press, 1994',
+  'restricted',
+  'Described in the supplied dossier as the single most important broad academic monograph on Anioma/Western Igbo social history. Not read directly by this environment.',
+  'REVIEW'
+),
+(
+  'ohadike-ekumeku-movement-1991',
+  'Ohadike, Don C. — The Ekumeku Movement: Western Igbo Resistance to the British Conquest of Nigeria, 1883-1914',
+  'book',
+  'https://archive.org/details/isbn_9780821409923',
+  'Ohio University Press, 1991',
+  'restricted',
+  'A dedicated academic monograph on exactly the resistance movement already recorded in this database''s ekumeku-resistance-movement event — per the supplied dossier, a strong upgrade to that event''s evidentiary base if its content is read and checked. Not read directly by this environment; linked to that event as a citation to follow up, not as independently confirmed content.',
+  'REVIEW'
+),
+(
+  'isichei-1969-asaba-polity-jstor',
+  'Isichei, Elizabeth — "Historical Change in an Ibo Polity: Asaba to 1885"',
+  'academic_paper',
+  'https://www.jstor.org/stable/179675',
+  'The Journal of African History, vol. 10 (1969), pp. 421-438',
+  'restricted',
+  'Per the supplied dossier, this peer-reviewed article''s own footnotes are themselves a map of exact CMS/SMA/Foreign Office/NAI/Oxford archival references — several of the CMS/SMA items in this addendum were identified via this route. Paywalled; not read directly.',
+  'REVIEW'
+),
+(
+  'nwaokocha-2015-anioma-identity-jstor',
+  'Nwaokocha, Odigwe A. — "An Interrogation of the Anioma Identity"',
+  'academic_paper',
+  'https://www.jstor.org/stable/24768927',
+  'Journal publication venue not confirmed via supplied dossier',
+  'restricted',
+  'Per the supplied dossier, this article''s bibliography points to both Nwaobi''s 1973 Catholic history of Issele-Uku and Akeh-Osu''s 1992 Issele-Uku history — possibly the same underlying work as the ResearchGate-hosted "researchgate-anioma-origin-identity" source already in this file, or a related/different paper by the same author; not confirmed either way. Paywalled; not read.',
+  'REVIEW'
+),
+(
+  'afigbo-1983-igbo-origins-jstor',
+  'Afigbo, A. E. — "Traditions of Igbo Origins: A Comment"',
+  'academic_paper',
+  'https://www.jstor.org/stable/3171687',
+  'Journal publication venue not confirmed via supplied dossier (1983)',
+  'restricted',
+  'A methodological piece, per the supplied dossier, cautioning against treating migration/origin oral traditions as literal political chronology — directly relevant to how this database already handles the disputed founding-of-issele-uku entry. Paywalled; not read.',
+  'REVIEW'
+),
+(
+  'bird-2011-asaba-massacres-jstor',
+  'Bird, S. Elizabeth — "The History and Legacy of the Asaba, Nigeria, Massacres"',
+  'academic_paper',
+  'https://www.jstor.org/stable/41304792',
+  'Journal publication venue not confirmed via supplied dossier (2011)',
+  'restricted',
+  'Peer-reviewed treatment of the 1967 Asaba massacres during the Nigerian Civil War — regional Anioma history, not about Issele-Uku specifically. Paywalled; not read.',
+  'REVIEW'
+),
+(
+  'ayandele-1968-royal-niger-company-jstor',
+  'Ayandele, E. A. — "Society and the Royal Niger Company, 1886-1900"',
+  'academic_paper',
+  'https://www.jstor.org/stable/41856763',
+  'Journal publication venue not confirmed via supplied dossier (1968)',
+  'restricted',
+  'Analysis of society under Royal Niger Company administration, per the supplied dossier — relevant background for this database''s royal-niger-company-at-asaba event. Paywalled; not read.',
+  'REVIEW'
+),
+(
+  'ojo-2013-womens-war-jstor',
+  'Ojo, Olatunji — "''Shaving of a woman''s head'': Isinmo and the Igbo women''s war on forced marriages in Southern Nigeria, 1900-1936"',
+  'academic_paper',
+  'https://www.jstor.org/stable/43860469',
+  'Canadian Journal of African Studies, vol. 47, no. 3 (2013)',
+  'restricted',
+  'Engages the Asaba district/Western Igbo environment specifically, per the supplied dossier — a possible companion piece for interpreting the Native Court cases above involving women. Paywalled; not read.',
+  'REVIEW'
+),
+(
+  'igbafe-1978-benin-british-administration',
+  'Igbafe, Philip Aigbona — Benin Under British Administration: The Impact of Colonial Rule on an African Kingdom, 1897-1938',
+  'book',
+  'https://books.google.com/books/about/Benin_Under_British_Administration.html?id=2FR0AAAAMAAJ',
+  'Humanities Press, 1978',
+  'restricted',
+  'Standard academic study of colonial Benin, per the supplied dossier — relevant background for Issele-Uku''s claimed relationship with the Benin kingdom, not itself about Issele-Uku. Not read.',
+  'REVIEW'
+),
+(
+  'bird-ottanelli-2017-asaba-massacre-book',
+  'Bird, S. Elizabeth, and Fraser M. Ottanelli — The Asaba Massacre: Trauma, Memory, and the Nigerian Civil War',
+  'book',
+  'https://www.cambridge.org/core/books/asaba-massacre/what-happened-at-asaba/E250E2E81FC43F6229FEDC3C5FEAE812',
+  'Cambridge University Press, 2017',
+  'restricted',
+  'Detailed academic treatment of the 1967 Asaba massacre and its memory — regional Civil War history for the Anioma area, not Issele-Uku specifically, per the supplied dossier. Not read.',
+  'REVIEW'
+),
+(
+  'nwaokocha-2021-wartime-trade-bjas',
+  'Nwaokocha, Odigwe A. — "Exchange over Troubled Waters: The Anioma and the War-Time Trade with Biafra, 1967-1970"',
+  'academic_paper',
+  'https://pdfs.semanticscholar.org/3b78/0223a9da4183d0611d6bb56ae90ea422592c.pdf',
+  'Brazilian Journal of African Studies, vol. 6, no. 12 (2021), pp. 69-86',
+  'full_text_available',
+  'Per the supplied dossier, this article identifies an Agbor-Issele Uku-Illah wartime trade route and a second Agbor-Issele Uku-Issele Azagba route, based on oral-history fieldwork including a named Issele-Uku trader (Achasia Nwose) interviewed 8 April 2009. Used directly below for a new, explicitly oral-tradition-labelled historical event. An open PDF mirror appears available at this URL per the dossier; not opened directly by this environment.',
+  'REVIEW'
+),
+(
+  'fenske-2014-rubber-colonial-benin',
+  'Fenske, James — "Trees, Tenure and Conflict: Rubber in Colonial Benin"',
+  'academic_paper',
+  'https://wrap.warwick.ac.uk/85603/1/WRAP_S0304387813000709-main.pdf',
+  'Journal of Development Economics, vol. 110 (2014), pp. 226-238',
+  'full_text_available',
+  'Peer-reviewed economic history of colonial Benin using British and Nigerian archives, per the supplied dossier — regional background, not about Issele-Uku specifically. Open-access PDF at this URL; not opened directly by this environment.',
+  'REVIEW'
+),
+-- Local histories (the likely root of several widely-repeated community claims)
+(
+  'akeh-osu-1992-issele-uku-history',
+  'Akeh-Osu, Chris Afumata — The History of Great Isi-Ile-Uku (Issele-Uku) Kingdom: Founded in 1230 A.D. by Ogie (King) Uwadiaie ... and the Emergence of the Mighty Umu-Ezechimas',
+  'book',
+  'https://books.google.com/books/about/The_History_of_Great_Isi_ile_Uku_Issele.html?id=UOVq0AEACAAJ',
+  'Etukokwu, Onitsha, 1992',
+  'restricted',
+  'The most directly focused published local history of Issele-Uku identified, per the supplied dossier — and very likely the ultimate source of the "1230 AD, founded by Prince Uwadiaie" narrative already recorded (as DISPUTED/LOW) in this database''s founding-of-issele-uku event, given the claim is embedded in this book''s own title. Community websites and possibly Wikipedia repeating this narrative are plausibly repeating this one book, not independently confirming it — an important distinction the supplied dossier explicitly flags, added here as a methodological note rather than upgrading the underlying claim''s confidence. Not read directly by this environment; existence confirmed independently by both Google Books and WorldCat per the dossier.',
+  'REVIEW'
+),
+(
+  'okpuno-1968-eze-chima-history',
+  'Okpuno, Lawrence N. — A Short History of Eze-Chima: Idumuje, Odi Ani Clans and Akwukwu-Igbo, Ukala, Illah Towns in Asaba Division',
+  'book',
+  'https://books.google.com/books/about/A_Short_History_of_Eze_Chima.html?id=NL7iAAAAMAAJ',
+  'Midwest Newspapers Corporation, 1968',
+  'restricted',
+  'An earlier (1968) local history of the Eze-Chima/Ezechima dynasty and related western Niger communities, per the supplied dossier, useful as an independent-ish comparison point to Akeh-Osu''s later 1992 account, though not necessarily independent in its own sourcing. Not read directly by this environment.',
+  'REVIEW'
+),
+(
+  'nwaobi-1973-catholic-history-issele-uku',
+  'Nwaobi — A Brief History of Catholic Church in Issele-Uku',
+  'book',
+  '',
+  'Sketch Publishing Co., Ibadan, 1973',
+  'restricted',
+  'A locally-focused Catholic mission history predating the 1973 creation of the Diocese of Issele-Uku, identified via its citation in Nwaokocha''s scholarly bibliography per the supplied dossier — no public URL available; the project owner would need to contact the diocese or a Nigerian library directly. Not read.',
+  'REVIEW'
+);
+
+-- New, directly citable fact #1: the diocesan retrospective's own dating of
+-- the first Catholic Mass in the wider diocesan territory, corroborated in
+-- year (not exact date) by an independent missionary letter from the same
+-- year.
+insert into public.historical_events (slug, title, description, date_exact, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'first-catholic-mass-diocesan-territory',
+  'Traditionally-dated first Catholic Mass in the diocesan territory',
+  'The Roman Catholic Diocese of Issele-Uku''s own retrospective history dates the first Mass celebrated in what later became its diocesan territory to 5 March 1888, naming Fr Carlo Zappa (a Society of African Missions priest) as the first missionary. A letter from Zappa to his Superior General dated 4 October 1888 — the same year — exists in the Société des Missions Africaines archive in Rome per a supplied research dossier, offering same-year (though not same-date) corroboration from outside the diocese''s own institutional memory. This predates the diocese''s own formal creation in 1973 (see that separate event) by 85 years, and is not itself specifically about Issele-Uku town as opposed to the wider mission territory.',
+  '1888-03-05',
+  '5 March 1888 (per diocesan tradition)',
+  'DOCUMENTED', 'LOW', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'first-catholic-mass-diocesan-territory'
+  and s.slug in ('issele-uku-diocese-history', 'sma-zappa-letter-1888', 'cms-macaulay-report-asaba-1889');
+
+-- New, directly citable fact #2: a Civil War-era trade route, explicitly
+-- labelled ORAL_TRADITION since the underlying evidence is a single named
+-- informant's 2009 account, even though relayed through a peer-reviewed
+-- article.
+insert into public.historical_events (slug, title, description, date_from, date_to, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'civil-war-trade-route-through-issele-uku',
+  'A reported wartime trade route through Issele-Uku (oral history)',
+  'A peer-reviewed academic article on Anioma''s war-time trade during the Nigerian Civil War (1967-1970) identifies a trade route running Agbor-Issele Uku-Illah, and a second route Agbor-Issele Uku-Issele Azagba, based on oral-history fieldwork. The specific source for this claim is a named Issele-Uku trader, Achasia Nwose, interviewed on 8 April 2009 — meaning this is fundamentally one person''s recollection of events roughly 40 years earlier, published by a scholar, not a contemporary documentary record. Recorded as ORAL_TRADITION for that reason, not DOCUMENTED.',
+  '1967-01-01',
+  '1970-01-01',
+  '1967-1970 (approximate; based on a single 2009 oral history interview)',
+  'ORAL_TRADITION', 'LOW', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'civil-war-trade-route-through-issele-uku' and s.slug = 'nwaokocha-2021-wartime-trade-bjas';
+
+-- New, regional-context event: the 1967 Asaba massacre. Explicitly scoped
+-- as Asaba (not Issele-Uku), same discipline as the Royal Niger Company
+-- entry — real, grave, and well-documented Anioma Civil War history, not
+-- attributed to the town itself absent any source tying it there.
+insert into public.historical_events (slug, title, description, date_exact, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'asaba-massacre-1967-regional-context',
+  'Asaba Massacre, October 1967 (regional context, not Issele-Uku specifically)',
+  'In October 1967, during the early Nigerian Civil War, federal Nigerian troops killed a large number of Igbo civilians at Asaba (a neighbouring Anioma town, not Issele-Uku) after federal forces retook the town from Biafran control. This is documented in peer-reviewed academic literature, per a supplied research dossier — a Journal of African History-adjacent-tier article and a dedicated Cambridge University Press monograph. Recorded here as grave, well-documented regional Civil War history for the Anioma area Issele-Uku belongs to, not because any source ties this event to Issele-Uku itself specifically — none was found.',
+  '1967-10-07',
+  'October 1967 (Asaba specifically; regional context)',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'asaba-massacre-1967-regional-context'
+  and s.slug in ('bird-2011-asaba-massacres-jstor', 'bird-ottanelli-2017-asaba-massacre-book');
+
+-- Enrichment: named components of the Ine Aho festival, from a direct 2018
+-- interview with the reigning Obi, plus a note on 2019 diaspora
+-- participation. Appends to the existing HIGH-confidence entry rather than
+-- replacing it.
+update public.culture_categories
+set description = description || ' A 2018 interview with the reigning Obi names specific component activities of the festival: Izu Afiachi, Ilo Chi Ikpala, Ilo Chi Ikolo, Mgba Ututu, Iba Nzu, and Ihu Onicha — the latter already referenced above via earlier sourcing, now corroborated by this second, independent interview. A 2019 article additionally reports diaspora participation in that year''s festival programme, consistent with this project''s own observation (see the Issele-Uku Union UK source elsewhere in this database) that the diaspora maintains active interest in the festival.'
+where slug = 'ine-aho-festival';
+
+-- culture_categories has no dedicated source-join table (see ARCHITECTURE.md
+-- note on Phase 4), so citations for this update are recorded in the
+-- description text itself, matching every other culture_categories entry
+-- in this file.
+
+-- Link Ohadike's dedicated Ekumeku monograph to the existing Ekumeku event
+-- as a strong additional citation.
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'ekumeku-resistance-movement' and s.slug = 'ohadike-ekumeku-movement-1991';
+
+-- Link additional Royal-Niger-Company-era sources to the existing entry.
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'royal-niger-company-at-asaba'
+  and s.slug in ('ayandele-1968-royal-niger-company-jstor', 'bodleian-asaba-division-annual-report-1947');
+
+-- Link new monarch-related press sources to the existing (still-REVIEW,
+-- still requiring palace confirmation) current-Obi record.
+insert into public.monarch_sources (monarch_id, source_id)
+select m.id, s.id from public.monarchs m, public.sources s
+where m.slug = 'nduka-ezeagwuna-ii' and s.slug in ('guardian-2017-engineer-king', 'punch-2017-obi-interview');
+
+-- Methodological correction to the existing disputed founding-narrative
+-- event: the "1230 AD / Prince Uwadiaie" claim is very likely traceable to
+-- one specific 1992 local history book, not to independent confirmation
+-- across the sources that repeat it. This does not change the DISPUTED/LOW
+-- rating — it explains more precisely *why* that rating is appropriate.
+update public.historical_events
+set description = description || ' A supplied research dossier makes an important methodological point about this narrative''s likely evidentiary lineage: the specific claim of an 1230 AD founding by "Prince Uwadiaie" appears in the title of a 1992 local history book (Akeh-Osu, cited elsewhere in this database''s sources), and websites repeating the same specific claim (including, plausibly, the Wikipedia article already cited here) may simply be repeating that one book rather than independently confirming it. Community/oral accounts repeating a single written source are not the same as multiple independent lines of evidence agreeing — this does not make the claim false, but it does mean the number of places it appears should not be mistaken for corroboration.'
+where slug = 'founding-of-issele-uku';
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'founding-of-issele-uku'
+  and s.slug in ('akeh-osu-1992-issele-uku-history', 'okpuno-1968-eze-chima-history', 'nwaokocha-2015-anioma-identity-jstor');

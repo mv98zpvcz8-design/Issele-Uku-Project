@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
+import { PrintButton } from "@/components/archive/PrintButton";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { accessStatusLabel } from "@/lib/content/labels";
 import { createClient } from "@/lib/supabase/server";
@@ -85,9 +86,12 @@ export default async function SourcePage({ params }: { params: Promise<{ slug: s
 
   return (
     <Container className="max-w-2xl py-12 sm:py-16">
-      <Link href="/research-library" className="text-sm font-medium text-accent hover:underline">
-        ← Back to research library
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Link href="/research-library" className="text-sm font-medium text-accent hover:underline">
+          ← Back to research library
+        </Link>
+        <PrintButton />
+      </div>
 
       <p className="mt-4 text-sm font-medium uppercase tracking-widest text-accent">
         {source.source_type?.replaceAll("_", " ") ?? "Source"}
