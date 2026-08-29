@@ -30,6 +30,13 @@ export const COPYRIGHT_OPTIONS = [
   { value: "RESTRICTED", label: "Restricted" },
 ] as const;
 
+export const PERSON_CATEGORY_OPTIONS = [
+  { value: "historical", label: "Historical figure" },
+  { value: "notable_diaspora", label: "Notable — now in the diaspora" },
+  { value: "contemporary_local", label: "Notable — currently local" },
+  { value: "mentioned", label: "Mentioned in a story/event/source" },
+] as const;
+
 export const SUBMISSION_STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
   { value: "in_review", label: "In review" },

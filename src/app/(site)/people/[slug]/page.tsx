@@ -7,6 +7,7 @@ import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CoverImage } from "@/components/archive/CoverImage";
 import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
+import { PERSON_CATEGORY_LABELS } from "@/lib/content/labels";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
 
@@ -90,12 +91,19 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <EvidenceBadge evidenceType={person.evidence_type} />
         <ConfidenceLabel confidenceLevel={person.confidence_level} />
+        <span className="rounded-full border border-line bg-paper-muted px-3 py-1 text-xs font-medium text-ink-soft">
+          {PERSON_CATEGORY_LABELS[person.person_category]}
+        </span>
         {(person.birth_date || person.death_date) && (
           <span className="text-sm text-ink-soft">
             {person.birth_date ?? "?"} – {person.death_date ?? "present"}
           </span>
         )}
       </div>
+
+      {person.current_residence && (
+        <p className="mt-4 text-sm text-ink-soft">Currently based in: {person.current_residence}</p>
+      )}
 
       {person.biography && <p className="mt-8 text-lg leading-8 text-ink-soft">{person.biography}</p>}
 

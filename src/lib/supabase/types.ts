@@ -25,6 +25,8 @@ export type EvidenceType =
 
 export type ConfidenceLevel = "HIGH" | "MEDIUM" | "LOW" | "UNKNOWN";
 
+export type PersonCategory = "historical" | "notable_diaspora" | "contemporary_local" | "mentioned";
+
 export type CopyrightStatus =
   | "PUBLIC_DOMAIN"
   | "PERMISSION_GRANTED"
@@ -217,6 +219,8 @@ interface PublicTables {
           associated_locations: string[];
           historical_period: string | null;
           image_media_id: string | null;
+          person_category: PersonCategory;
+          current_residence: string | null;
           evidence_type: EvidenceType;
           confidence_level: ConfidenceLevel;
           verification_status: ContentStatus;

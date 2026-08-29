@@ -1,6 +1,6 @@
 import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField, ListField } from "@/components/admin/fields";
-import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS } from "@/lib/admin/options";
+import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS, PERSON_CATEGORY_OPTIONS } from "@/lib/admin/options";
 import { requireEditorPage } from "@/lib/admin/session";
 import { createPerson } from "../actions";
 
@@ -24,6 +24,8 @@ export default async function NewPersonPage() {
             name="image_media_id"
             label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
           />
+          <SelectField name="person_category" label="Category" options={PERSON_CATEGORY_OPTIONS} />
+          <TextField name="current_residence" label="Current residence (e.g. a diaspora city/country)" />
           <SelectField name="evidence_type" label="Evidence type" options={EVIDENCE_OPTIONS} />
           <SelectField name="confidence_level" label="Confidence level" options={CONFIDENCE_OPTIONS} />
           <SelectField name="verification_status" label="Workflow status" options={STATUS_OPTIONS} />

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField, ListField } from "@/components/admin/fields";
-import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS } from "@/lib/admin/options";
+import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS, PERSON_CATEGORY_OPTIONS } from "@/lib/admin/options";
 import { PreviewLink } from "@/components/admin/PreviewLink";
 import { PhotoAttachmentPanel } from "@/components/admin/PhotoAttachmentPanel";
 import { requireEditorPage } from "@/lib/admin/session";
@@ -41,6 +41,17 @@ export default async function EditPersonPage({ params }: { params: Promise<{ id:
             name="image_media_id"
             label="Cover image (Archive Media ID — see an Archive Item's Media list, or its /media/… link)"
             defaultValue={person.image_media_id}
+          />
+          <SelectField
+            name="person_category"
+            label="Category"
+            defaultValue={person.person_category}
+            options={PERSON_CATEGORY_OPTIONS}
+          />
+          <TextField
+            name="current_residence"
+            label="Current residence (e.g. a diaspora city/country)"
+            defaultValue={person.current_residence}
           />
           <SelectField name="evidence_type" label="Evidence type" defaultValue={person.evidence_type} options={EVIDENCE_OPTIONS} />
           <SelectField

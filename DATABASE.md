@@ -193,6 +193,8 @@ licensed thumbnail/cover is explicitly permitted.
 | associated_locations | text[] |
 | historical_period | text, nullable |
 | image_media_id | uuid, references archive_media(id), nullable |
+| person_category | text (historical, notable_diaspora, contemporary_local, mentioned), default `historical` — lets People cover diaspora figures and people who only appear within a story/event/source, not just biography subjects with a research page of their own |
+| current_residence | text, nullable — free-text current location, most relevant for notable_diaspora/contemporary_local |
 | evidence_type | evidence_type, default `UNVERIFIED` |
 | confidence_level | confidence_level, default `UNKNOWN` |
 | verification_status | content_status, default `DRAFT` |

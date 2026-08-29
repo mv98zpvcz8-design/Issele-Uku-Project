@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAdminSession, canEdit } from "@/lib/admin/session";
 import { slugify } from "@/lib/admin/slugify";
 import { parseListField } from "@/components/admin/fields";
-import type { ContentStatus, EvidenceType, ConfidenceLevel } from "@/lib/supabase/types";
+import type { ContentStatus, EvidenceType, ConfidenceLevel, PersonCategory } from "@/lib/supabase/types";
 
 async function requireEditor() {
   const session = await getAdminSession();
@@ -27,6 +27,8 @@ function fieldsFromForm(formData: FormData) {
     associated_locations: parseListField(formData.get("associated_locations")),
     historical_period: String(formData.get("historical_period") ?? "").trim() || null,
     image_media_id: String(formData.get("image_media_id") ?? "").trim() || null,
+    person_category: String(formData.get("person_category") ?? "historical") as PersonCategory,
+    current_residence: String(formData.get("current_residence") ?? "").trim() || null,
     evidence_type: String(formData.get("evidence_type") ?? "UNVERIFIED") as EvidenceType,
     confidence_level: String(formData.get("confidence_level") ?? "UNKNOWN") as ConfidenceLevel,
     verification_status: String(formData.get("verification_status") ?? "DRAFT") as ContentStatus,

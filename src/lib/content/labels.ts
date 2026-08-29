@@ -9,3 +9,11 @@ const ACCESS_STATUS_LABELS: Record<string, string> = {
 export function accessStatusLabel(status: string): string {
   return ACCESS_STATUS_LABELS[status] ?? status.replaceAll("_", " ");
 }
+
+/** For `people.person_category` — see DATABASE.md. */
+export const PERSON_CATEGORY_LABELS: Record<string, string> = {
+  historical: "Historical figure",
+  notable_diaspora: "Notable — in the diaspora",
+  contemporary_local: "Notable — currently local",
+  mentioned: "Mentioned in a story",
+};
