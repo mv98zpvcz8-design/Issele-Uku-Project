@@ -98,11 +98,26 @@ creating it, per the cost-control rule.
 4. Apply the schema to that project: `npx supabase link --project-ref <your-project-ref>` then `npx supabase db push` (pushes `supabase/migrations/`). Demo data is separate and optional: `npx supabase db reset` only against a local/dev database, never against the linked project, seeds it — see DATABASE.md.
    - Separately, `supabase/real_content.sql` holds the first pass of real, web-sourced (not demo) content — see DECISIONS.md D-024 for exactly how it was researched and why every row lands at `REVIEW` status. It is not applied by `db push` or `db reset`; run it deliberately once against the real project (`psql "<connection string>" -f supabase/real_content.sql`) **after** re-verifying its citations yourself (the sourcing pass had no direct page-fetch access — see the file's own header comment) and, for the monarch records specifically, after confirming them with the palace/community. Nothing in it becomes public until you also move its rows from `REVIEW` to `PUBLISHED`.
 5. For local development, copy `.env.example` to `.env.local` and fill in the same three values (`.env.local` is already git-ignored).
+6. **Auth setup for the admin sign-in (Phase 6):** the admin area uses passwordless magic-link sign-in. In the Supabase dashboard, go to **Authentication → URL Configuration** and set:
+   - **Site URL** to your deployed site's URL (e.g. `https://issele-uku-project.vercel.app`, or your custom domain once set up).
+   - **Redirect URLs**: add `<your-site-url>/auth/callback` (and, for local dev, `http://localhost:3000/auth/callback`) — Supabase rejects a magic-link redirect to any URL not on this list.
+7. **Create the first staff account.** Every new Supabase Auth user automatically gets a `profiles` row defaulting to the `RESEARCHER` role (least privilege — see DECISIONS.md D-026's neighboring migration). To get your first `ADMIN`: have that person sign in once via `/admin/login` (this creates their `auth.users`/`profiles` rows), then, in the Supabase dashboard's SQL editor, run:
+   ```sql
+   update public.profiles set role = 'ADMIN' where id = (
+     select id from auth.users where email = 'their-email@example.com'
+   );
+   ```
+   There is no admin-UI way to do this yet (promoting a role currently requires direct database access) — the `profiles.role` self-escalation trigger (see DATABASE.md) means this genuinely has to come from an existing ADMIN or direct database access, not a UI shortcut.
 
 I can run step 4 myself if you paste the project ref and the two public
 values here — the service-role key doesn't need to pass through this
-chat at all, since nothing I've built yet needs it (Phase 6's admin
-system will).
+chat at all. The admin CRUD system (Phase 6) does not use the
+service-role key either — it writes through the same RLS-respecting
+client as the public site, relying on RLS itself to permit ADMIN/EDITOR
+writes (see DECISIONS.md D-025) — so that key still isn't needed for
+day-to-day content work, only for the kind of RLS-bypassing operation
+described in `src/lib/supabase/service-role.ts`'s own comment, if one
+ever comes up.
 
 ## Backup and data portability
 

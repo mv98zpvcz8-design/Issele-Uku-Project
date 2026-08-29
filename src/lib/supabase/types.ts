@@ -143,8 +143,8 @@ interface PublicTables {
         };
         Insert: Omit<
           PublicTables["places"]["Row"],
-          "id" | "public_visibility" | "created_at" | "updated_at"
-        > & { id?: string };
+          "id" | "public_visibility" | "created_at" | "updated_at" | "cover_media_id"
+        > & { id?: string; cover_media_id?: string | null };
         Update: Partial<PublicTables["places"]["Insert"]>;
       };
       archive_items: {
@@ -226,8 +226,8 @@ interface PublicTables {
         };
         Insert: Omit<
           PublicTables["people"]["Row"],
-          "id" | "public_visibility" | "created_at" | "updated_at"
-        > & { id?: string };
+          "id" | "public_visibility" | "created_at" | "updated_at" | "image_media_id"
+        > & { id?: string; image_media_id?: string | null };
         Update: Partial<PublicTables["people"]["Insert"]>;
       };
       historical_events: {
@@ -276,8 +276,8 @@ interface PublicTables {
         };
         Insert: Omit<
           PublicTables["monarchs"]["Row"],
-          "id" | "public_visibility" | "created_at" | "updated_at"
-        > & { id?: string };
+          "id" | "public_visibility" | "created_at" | "updated_at" | "image_media_id"
+        > & { id?: string; image_media_id?: string | null };
         Update: Partial<PublicTables["monarchs"]["Insert"]>;
       };
       oral_histories: {
