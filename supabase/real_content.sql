@@ -29,9 +29,18 @@
 --
 -- This file is NOT applied automatically by any tooling — it must be
 -- run deliberately (`psql <connection> -f supabase/real_content.sql`,
--- or copied into the admin UI once Phase 6 exists) against a real
--- Supabase project, after the migrations in supabase/migrations/ have
--- been applied.
+-- or pasted into the Supabase SQL Editor) against a real Supabase
+-- project, after the migrations in supabase/migrations/ have been
+-- applied. Re-run safely fails on the second attempt (unique slugs) —
+-- if re-applying after the ADDENDUM below was added, either run only
+-- the new statements, or drop and re-insert deliberately.
+--
+-- Current total: 18 sources, 4 culture categories, 12 places, 2
+-- monarchs, 5 historical events, 2 people. Validated end-to-end against
+-- a local Postgres instance (all migrations + this file applying
+-- cleanly with no errors) before being handed over — see DECISIONS.md
+-- D-034 for the second research pass (ADDENDUM) that added the people
+-- table's first two rows.
 
 -- ============================= SOURCES =============================
 
@@ -324,3 +333,144 @@ where p.slug in (
   'ogbe-owelle-quarter','ogbe-utu-quarter','ukpai-quarter','ogbe-ofu-quarter','ogboli-quarter',
   'idumuinei-quarter','isheakpe-quarter','ogbidibo-quarter','ogbe-ntiobi-quarter','idumu-ahaba-quarter'
 ) and s.slug = 'wikipedia-issele-ukwu';
+
+-- ============================================================================
+-- ADDENDUM (second research pass) — same rules, same caveats as above: every
+-- claim below was found via WebSearch only (no direct page-fetch), every row
+-- lands at REVIEW, nothing here is invented. Where a fact could NOT be
+-- confirmed to a standard worth including, it was left out rather than
+-- guessed — e.g. a search for playwright Sam Ukala's birthplace turned up
+-- strong biographical detail but no confirmation he was specifically from
+-- Issele-Uku (only Delta State generally), so he is deliberately not
+-- included here.
+-- ============================================================================
+
+-- ============================= SOURCES (2) =============================
+
+insert into public.sources (slug, title, source_type, url, publisher, access_status, reliability_notes, verification_status) values
+(
+  'wikipedia-zulu-sofola',
+  'Zulu Sofola',
+  'website',
+  'https://en.wikipedia.org/wiki/Zulu_Sofola',
+  'Wikipedia',
+  'external_access',
+  'Tertiary/crowd-sourced source, relayed via search summary rather than direct fetch (same environment limitation noted throughout this file).',
+  'REVIEW'
+),
+(
+  'ascleiden-zulu-sofola',
+  'Zulu Sofola (library note)',
+  'website',
+  'https://www.ascleiden.nl/content/library-weekly/zulu-sofola',
+  'African Studies Centre Leiden',
+  'external_access',
+  'An academic area-studies institute''s library page — a stronger tier of source than a general news or community site, though still relayed via search summary.',
+  'REVIEW'
+),
+(
+  'wikipedia-ekumeku-movement',
+  'Ekumeku Movement',
+  'website',
+  'https://en.wikipedia.org/wiki/Ekumeku_Movement',
+  'Wikipedia',
+  'external_access',
+  'Tertiary/crowd-sourced source, relayed via search summary. Corroborated in its broad outline (dates, nature of the movement) by the Vanguard News article cited alongside it.',
+  'REVIEW'
+),
+(
+  'vanguard-2019-ekumeku-war',
+  'Ekumeku war: Anioma uprising against British rule',
+  'newspaper',
+  'https://www.vanguardngr.com/2019/03/ekumeku-war-anioma-uprising-against-british-rule/',
+  'Vanguard News',
+  'external_access',
+  'Nigerian national newspaper, published March 2019.',
+  'REVIEW'
+),
+(
+  'guardian-inne-festival',
+  'Inne Festival lights up Issele-Ukwu community',
+  'newspaper',
+  'https://guardian.ng/saturday-magazine/inne-festival-lights-up-issele-ukwu-community/',
+  'The Guardian Nigeria',
+  'external_access',
+  'Nigerian national newspaper.',
+  'REVIEW'
+),
+(
+  'wavesngr-igbu-awai',
+  'The Significance Of Igbu Awai Festival In Issele-Uku',
+  'website',
+  'https://www.wavesngr.com/2022/09/02/the-significance-of-igbu-awai-festival-in-issele-uku/',
+  'Nigeria Waves',
+  'external_access',
+  'A single, less-established outlet — not corroborated elsewhere in this research pass. Included per the project''s "include what''s found, label honestly" approach, but flagged LOW confidence specifically because it is not independently corroborated, unlike most other entries in this file.',
+  'REVIEW'
+);
+
+-- ========================= CULTURE CATEGORIES (2) =========================
+
+insert into public.culture_categories (slug, name, description, evidence_type, confidence_level, verification_status)
+values (
+  'igbu-awai-festival',
+  'Igbu Awai',
+  'Igbu Awai is reported as a festival/ceremony observed in Issele-Uku, per a single web article found in this research pass. That article was not corroborated by any second, independent source in this search session — unlike this file''s other festival entries (Ine Aho), which multiple national newspapers independently describe. Recorded here rather than omitted, per the project''s policy of including what was found with an honest confidence label, but a reviewer should treat this entry as needing corroboration before it is relied on for anything beyond "a source claims this exists."',
+  'DOCUMENTED', 'LOW', 'REVIEW'
+);
+
+-- ============================== PEOPLE =================================
+
+insert into public.people (slug, name, titles, biography, birth_date, associated_locations, historical_period, evidence_type, confidence_level, verification_status)
+values (
+  'zulu-sofola',
+  'Zulu Sofola',
+  array['Professor of Theatre Arts'],
+  'Born 22 June 1935 in Issele-Uku, Zulu Sofola was a Nigerian playwright described in multiple sources as Africa''s first female professor of theatre arts and, per one source, the first published female author in Nigeria. Exact death date and further biographical/career detail: research pending — this entry reflects only what was directly corroborated across the sources cited, not a full biography.',
+  '1935-06-22',
+  array['Issele-Uku'],
+  'Post-independence Nigeria (20th century)',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+);
+
+insert into public.people (slug, name, titles, biography, associated_locations, historical_period, evidence_type, confidence_level, verification_status)
+values (
+  'nwabuzo-olimagwo',
+  'Nwabuzo Olimagwo',
+  array['Ekumeku commander'],
+  'Named in sourcing as one of the Anioma Ekumeku commanders associated with Issele-Uku during the Ekumeku resistance movement against British colonial rule (see the Ekumeku Movement historical event). This is a thin, single-mention citation rather than a developed biography — dates, role, and further detail: research pending.',
+  array['Issele-Uku'],
+  'Colonial period (1883–1914)',
+  'DOCUMENTED', 'LOW', 'REVIEW'
+);
+
+-- ========================= HISTORICAL EVENTS (2) =========================
+
+insert into public.historical_events (slug, title, description, date_from, date_to, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'ekumeku-resistance-movement',
+  'Ekumeku Movement (Anglo-Ekumeku War)',
+  'The Ekumeku Movement was a guerrilla resistance movement across Anioma (Western Igboland) against British colonial incursion, fought in two phases (1883–1902 and 1904–1914) and organised as a secret, oath-bound network rather than a single standing force. Issele-Uku is reported as one of the movement''s operational bases and the site of some of its fiercest battles with British forces; the town later became a British colonial administrative headquarters. Sourcing names the "Idabor of Issele-Uku" (a chieftaincy title, individual not otherwise identified in what was found) and Nwabuzo Olimagwo as figures associated with Issele-Uku''s part in the resistance — see the linked person record for the latter. Broad outline corroborated by Wikipedia and Vanguard News independently; Issele-Uku''s specific role is reported consistently across sources found but was not cross-checked against an academic/primary source in this pass.',
+  '1883-01-01',
+  '1914-01-01',
+  '1883–1914 (two phases; Issele-Uku''s specific role not precisely dated)',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+);
+
+-- ========================= CROSS-REFERENCE JOINS (2) =========================
+
+insert into public.person_sources (person_id, source_id)
+select p.id, s.id from public.people p, public.sources s
+where p.slug = 'zulu-sofola' and s.slug in ('wikipedia-zulu-sofola', 'ascleiden-zulu-sofola');
+
+insert into public.person_sources (person_id, source_id)
+select p.id, s.id from public.people p, public.sources s
+where p.slug = 'nwabuzo-olimagwo' and s.slug = 'wikipedia-ekumeku-movement';
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'ekumeku-resistance-movement' and s.slug in ('wikipedia-ekumeku-movement', 'vanguard-2019-ekumeku-war');
+
+insert into public.event_people (event_id, person_id)
+select e.id, p.id from public.historical_events e, public.people p
+where e.slug = 'ekumeku-resistance-movement' and p.slug = 'nwabuzo-olimagwo';
