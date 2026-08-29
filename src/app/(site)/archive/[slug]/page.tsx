@@ -56,12 +56,54 @@ export default async function ArchiveItemPage({
   }
 
   const supabase = await createClient();
-  const { data: media } = await supabase
-    .from("archive_media")
-    .select("*")
-    .eq("archive_item_id", item.id)
-    .order("is_primary", { ascending: false })
-    .order("created_at", { ascending: true });
+  const [{ data: media }, categoryLinks, eventLinks, personLinks, placeLinks, monarchLinks] = await Promise.all([
+    supabase
+      .from("archive_media")
+      .select("*")
+      .eq("archive_item_id", item.id)
+      .order("is_primary", { ascending: false })
+      .order("created_at", { ascending: true }),
+    supabase.from("archive_item_culture_categories").select("category_id").eq("archive_item_id", item.id),
+    supabase.from("event_archive_items").select("event_id").eq("archive_item_id", item.id),
+    supabase.from("person_archive_items").select("person_id").eq("archive_item_id", item.id),
+    supabase.from("place_archive_items").select("place_id").eq("archive_item_id", item.id),
+    supabase.from("monarch_archive_items").select("monarch_id").eq("archive_item_id", item.id),
+  ]);
+
+  const [categories, events, people, places, monarchs] = await Promise.all([
+    categoryLinks.data?.length
+      ? supabase.from("culture_categories").select("slug, name").in("id", categoryLinks.data.map((r) => r.category_id))
+      : Promise.resolve({ data: [] }),
+    eventLinks.data?.length
+      ? supabase.from("historical_events").select("slug, title").in("id", eventLinks.data.map((r) => r.event_id))
+      : Promise.resolve({ data: [] }),
+    personLinks.data?.length
+      ? supabase.from("people").select("slug, name").in("id", personLinks.data.map((r) => r.person_id))
+      : Promise.resolve({ data: [] }),
+    placeLinks.data?.length
+      ? supabase.from("places").select("slug, name").in("id", placeLinks.data.map((r) => r.place_id))
+      : Promise.resolve({ data: [] }),
+    monarchLinks.data?.length
+      ? supabase
+          .from("monarchs")
+          .select("slug, name, regnal_name")
+          .in("id", monarchLinks.data.map((r) => r.monarch_id))
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const connections = {
+    categories: categories.data ?? [],
+    events: events.data ?? [],
+    people: people.data ?? [],
+    places: places.data ?? [],
+    monarchs: monarchs.data ?? [],
+  };
+  const hasConnections =
+    connections.categories.length > 0 ||
+    connections.events.length > 0 ||
+    connections.people.length > 0 ||
+    connections.places.length > 0 ||
+    connections.monarchs.length > 0;
 
   return (
     <Container className="max-w-3xl py-12 sm:py-16">
@@ -131,6 +173,64 @@ export default async function ArchiveItemPage({
               View external source →
             </a>
           )}
+        </div>
+      )}
+
+      {hasConnections && (
+        <div className="mt-8 border-t border-line pt-6">
+          <h2 className="font-display text-lg font-semibold text-ink">Appears in</h2>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {connections.categories.map((c) => (
+              <li key={`category-${c.slug}`}>
+                <Link
+                  href={`/culture/${c.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {c.name}
+                </Link>
+              </li>
+            ))}
+            {connections.events.map((e) => (
+              <li key={`event-${e.slug}`}>
+                <Link
+                  href={`/history/${e.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {e.title}
+                </Link>
+              </li>
+            ))}
+            {connections.people.map((p) => (
+              <li key={`person-${p.slug}`}>
+                <Link
+                  href={`/people/${p.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {p.name}
+                </Link>
+              </li>
+            ))}
+            {connections.places.map((p) => (
+              <li key={`place-${p.slug}`}>
+                <Link
+                  href={`/places/${p.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {p.name}
+                </Link>
+              </li>
+            ))}
+            {connections.monarchs.map((m) => (
+              <li key={`monarch-${m.slug}`}>
+                <Link
+                  href={`/monarchy/${m.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {m.regnal_name ?? m.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

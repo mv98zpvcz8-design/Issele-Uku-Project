@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CoverImage } from "@/components/archive/CoverImage";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -96,6 +97,8 @@ export default async function PlacePage({ params }: { params: Promise<{ slug: st
           <p className="mt-2 leading-7 text-ink-soft">{place.historical_significance}</p>
         </div>
       )}
+
+      <AttachedPhotos entityType="place" entityId={place.id} />
 
       {(people.length > 0 || events.length > 0) && (
         <div className="mt-8 flex flex-wrap gap-10 border-t border-line pt-6">

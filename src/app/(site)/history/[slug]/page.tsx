@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -95,6 +96,8 @@ export default async function HistoricalEventPage({
       {event.description && (
         <p className="mt-8 text-lg leading-8 text-ink-soft">{event.description}</p>
       )}
+
+      <AttachedPhotos entityType="event" entityId={event.id} />
 
       {place && (
         <p className="mt-6 text-sm text-ink-soft">

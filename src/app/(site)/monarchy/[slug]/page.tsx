@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CoverImage } from "@/components/archive/CoverImage";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -100,6 +101,8 @@ export default async function MonarchPage({ params }: { params: Promise<{ slug: 
       </div>
 
       {monarch.biography && <p className="mt-8 text-lg leading-8 text-ink-soft">{monarch.biography}</p>}
+
+      <AttachedPhotos entityType="monarch" entityId={monarch.id} />
 
       {(predecessor || successor) && (
         <div className="mt-8 flex flex-wrap gap-8 border-t border-line pt-6">

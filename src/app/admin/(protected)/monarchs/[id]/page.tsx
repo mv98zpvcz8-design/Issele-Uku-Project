@@ -4,6 +4,7 @@ import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField } from "@/components/admin/fields";
 import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS } from "@/lib/admin/options";
 import { PreviewLink } from "@/components/admin/PreviewLink";
+import { PhotoAttachmentPanel } from "@/components/admin/PhotoAttachmentPanel";
 import { requireEditorPage } from "@/lib/admin/session";
 import { updateMonarch, deleteMonarch } from "../actions";
 
@@ -64,6 +65,8 @@ export default async function EditMonarchPage({ params }: { params: Promise<{ id
           />
         </AdminForm>
       </div>
+
+      <PhotoAttachmentPanel entityType="monarch" entityId={monarch.id} />
     </div>
   );
 }

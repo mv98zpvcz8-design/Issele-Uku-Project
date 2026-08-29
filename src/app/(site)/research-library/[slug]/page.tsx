@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/Container";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { accessStatusLabel } from "@/lib/content/labels";
 import { createClient } from "@/lib/supabase/server";
@@ -9,8 +10,46 @@ import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
 
 async function getSource(slug: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from("sources").select("*").eq("slug", slug).maybeSingle();
-  return data;
+  const { data: source } = await supabase.from("sources").select("*").eq("slug", slug).maybeSingle();
+  if (!source) return null;
+
+  // "Referenced by" reverse lookups — the forward direction (an event's
+  // own page listing its sources) already existed; the source's own
+  // page listing what cites it did not.
+  const [eventLinks, placeLinks, personLinks, monarchLinks] = await Promise.all([
+    supabase.from("event_sources").select("event_id").eq("source_id", source.id),
+    supabase.from("place_sources").select("place_id").eq("source_id", source.id),
+    supabase.from("person_sources").select("person_id").eq("source_id", source.id),
+    supabase.from("monarch_sources").select("monarch_id").eq("source_id", source.id),
+  ]);
+
+  const [events, places, people, monarchs] = await Promise.all([
+    eventLinks.data?.length
+      ? supabase.from("historical_events").select("slug, title").in("id", eventLinks.data.map((r) => r.event_id))
+      : Promise.resolve({ data: [] }),
+    placeLinks.data?.length
+      ? supabase.from("places").select("slug, name").in("id", placeLinks.data.map((r) => r.place_id))
+      : Promise.resolve({ data: [] }),
+    personLinks.data?.length
+      ? supabase.from("people").select("slug, name").in("id", personLinks.data.map((r) => r.person_id))
+      : Promise.resolve({ data: [] }),
+    monarchLinks.data?.length
+      ? supabase
+          .from("monarchs")
+          .select("slug, name, regnal_name")
+          .in("id", monarchLinks.data.map((r) => r.monarch_id))
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  return {
+    source,
+    referencedBy: {
+      events: events.data ?? [],
+      places: places.data ?? [],
+      people: people.data ?? [],
+      monarchs: monarchs.data ?? [],
+    },
+  };
 }
 
 export async function generateMetadata({
@@ -20,9 +59,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   if (!SUPABASE_CONFIGURED) return { title: "Source" };
   const { slug } = await params;
-  const source = await getSource(slug);
-  if (!source) return { title: "Source" };
-  return { title: source.title };
+  const detail = await getSource(slug);
+  if (!detail) return { title: "Source" };
+  return { title: detail.source.title };
 }
 
 export default async function SourcePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -35,8 +74,14 @@ export default async function SourcePage({ params }: { params: Promise<{ slug: s
   }
 
   const { slug } = await params;
-  const source = await getSource(slug);
-  if (!source) notFound();
+  const detail = await getSource(slug);
+  if (!detail) notFound();
+  const { source, referencedBy } = detail;
+  const hasReferences =
+    referencedBy.events.length > 0 ||
+    referencedBy.places.length > 0 ||
+    referencedBy.people.length > 0 ||
+    referencedBy.monarchs.length > 0;
 
   return (
     <Container className="max-w-2xl py-12 sm:py-16">
@@ -68,6 +113,56 @@ export default async function SourcePage({ params }: { params: Promise<{ slug: s
         <div className="mt-6">
           <h2 className="font-display text-lg font-semibold text-ink">Notes</h2>
           <p className="mt-2 text-sm text-ink-soft">{source.reliability_notes}</p>
+        </div>
+      )}
+
+      <AttachedPhotos entityType="source" entityId={source.id} />
+
+      {hasReferences && (
+        <div className="mt-8 border-t border-line pt-6">
+          <h2 className="font-display text-lg font-semibold text-ink">Cited by</h2>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {referencedBy.events.map((e) => (
+              <li key={`event-${e.slug}`}>
+                <Link
+                  href={`/history/${e.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {e.title}
+                </Link>
+              </li>
+            ))}
+            {referencedBy.places.map((p) => (
+              <li key={`place-${p.slug}`}>
+                <Link
+                  href={`/places/${p.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {p.name}
+                </Link>
+              </li>
+            ))}
+            {referencedBy.people.map((p) => (
+              <li key={`person-${p.slug}`}>
+                <Link
+                  href={`/people/${p.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {p.name}
+                </Link>
+              </li>
+            ))}
+            {referencedBy.monarchs.map((m) => (
+              <li key={`monarch-${m.slug}`}>
+                <Link
+                  href={`/monarchy/${m.slug}`}
+                  className="inline-block rounded-full border border-line px-3 py-1 text-sm text-ink hover:border-accent hover:text-accent"
+                >
+                  {m.regnal_name ?? m.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

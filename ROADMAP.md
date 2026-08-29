@@ -68,6 +68,11 @@ Not yet done, tracked as follow-ups rather than silently skipped: a nonce-based 
 
 **Not yet built, worth knowing:** admin picks a cover image by pasting an Archive Media UUID (found via an archive item's own Media list) rather than a proper picker/uploader on the person/place/monarch's own edit page — `archive_media.archive_item_id` is a required foreign key, so a cover image today has to "belong" to some archive item first. A cleaner version (making that column nullable, or a dedicated upload path for standalone cover images) is a scoped future improvement, not a blocker to using what's here now.
 
+## Milestone — Photos on every content type, and closing cross-link gaps
+✅ Culture categories, historical events, sources, people, places, and monarchs can all have photos/documents attached (rendered as a gallery after the main text) and unlinked, from their own admin edit page — either by attaching an existing Archive Item or uploading a new file directly. New migration adds four join tables (`source_archive_items`, `person_archive_items`, `place_archive_items`, `monarch_archive_items`), mirroring the pattern already used for culture categories and events since Phases 4–5. Validated against local Postgres, including the full RLS matrix (RESEARCHER denied, EDITOR can link, anon can read only when both linked rows are published, anon cannot write).
+
+Also closed three real, pre-existing cross-link gaps found while auditing what already connects to what: the historical event page now shows its own linked archive items (the join table existed since Phase 5, nothing queried it there); a source's page now shows what cites it ("Cited by": events/places/people/monarchs — previously only the reverse direction existed); a person's page now shows associated places and events (both join tables existed since Phase 4, neither was surfaced). See DECISIONS.md D-037.
+
 ## Phase 10 — Pre-Palace Review
 ⏳ PRE_PALACE_REVIEW.md checklist completed and verified before any stakeholder demo.
 

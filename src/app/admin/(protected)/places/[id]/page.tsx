@@ -4,6 +4,7 @@ import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField, ListField } from "@/components/admin/fields";
 import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS } from "@/lib/admin/options";
 import { PreviewLink } from "@/components/admin/PreviewLink";
+import { PhotoAttachmentPanel } from "@/components/admin/PhotoAttachmentPanel";
 import { requireEditorPage } from "@/lib/admin/session";
 import { updatePlace, deletePlace } from "../actions";
 
@@ -59,6 +60,8 @@ export default async function EditPlacePage({ params }: { params: Promise<{ id: 
           />
         </AdminForm>
       </div>
+
+      <PhotoAttachmentPanel entityType="place" entityId={place.id} />
     </div>
   );
 }

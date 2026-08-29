@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -77,6 +78,8 @@ export default async function CultureCategoryPage({ params }: { params: Promise<
       {category.description && (
         <p className="mt-6 max-w-2xl text-lg leading-8 text-ink-soft">{category.description}</p>
       )}
+
+      <AttachedPhotos entityType="culture_category" entityId={category.id} />
 
       {items.length > 0 && (
         <div className="mt-10 border-t border-line pt-8">

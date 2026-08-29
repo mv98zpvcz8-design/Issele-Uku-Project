@@ -382,6 +382,26 @@ interface PublicTables {
         Insert: { event_id: string; archive_item_id: string };
         Update: never;
       };
+      source_archive_items: {
+        Row: { source_id: string; archive_item_id: string };
+        Insert: { source_id: string; archive_item_id: string };
+        Update: never;
+      };
+      person_archive_items: {
+        Row: { person_id: string; archive_item_id: string };
+        Insert: { person_id: string; archive_item_id: string };
+        Update: never;
+      };
+      place_archive_items: {
+        Row: { place_id: string; archive_item_id: string };
+        Insert: { place_id: string; archive_item_id: string };
+        Update: never;
+      };
+      monarch_archive_items: {
+        Row: { monarch_id: string; archive_item_id: string };
+        Insert: { monarch_id: string; archive_item_id: string };
+        Update: never;
+      };
 }
 
 export interface Database {

@@ -38,7 +38,8 @@ export function ArchiveMediaGallery({ media, itemTitle }: { media: ArchiveMedia[
   );
 }
 
-function MediaItem({ media, itemTitle, large }: { media: ArchiveMedia; itemTitle: string; large?: boolean }) {
+/** Exported for reuse by AttachedPhotos, which renders the same media types in a plain grid. */
+export function MediaItem({ media, itemTitle, large }: { media: ArchiveMedia; itemTitle: string; large?: boolean }) {
   const src = `/media/${media.id}`;
   const alt = media.caption || itemTitle;
 

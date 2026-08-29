@@ -4,6 +4,7 @@ import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField } from "@/components/admin/fields";
 import { STATUS_OPTIONS, EVIDENCE_OPTIONS, CONFIDENCE_OPTIONS } from "@/lib/admin/options";
 import { PreviewLink } from "@/components/admin/PreviewLink";
+import { PhotoAttachmentPanel } from "@/components/admin/PhotoAttachmentPanel";
 import { requireEditorPage } from "@/lib/admin/session";
 import { updateHistoricalEvent, deleteHistoricalEvent } from "../actions";
 
@@ -55,6 +56,8 @@ export default async function EditHistoricalEventPage({ params }: { params: Prom
           />
         </AdminForm>
       </div>
+
+      <PhotoAttachmentPanel entityType="event" entityId={event.id} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { AdminForm } from "@/components/admin/AdminForm";
 import { TextField, TextAreaField, SelectField } from "@/components/admin/fields";
 import { STATUS_OPTIONS } from "@/lib/admin/options";
 import { PreviewLink } from "@/components/admin/PreviewLink";
+import { PhotoAttachmentPanel } from "@/components/admin/PhotoAttachmentPanel";
 import { requireEditorPage } from "@/lib/admin/session";
 import { updateSource, deleteSource } from "../actions";
 
@@ -49,6 +50,8 @@ export default async function EditSourcePage({ params }: { params: Promise<{ id:
           <SelectField name="verification_status" label="Workflow status" defaultValue={source.verification_status} options={STATUS_OPTIONS} />
         </AdminForm>
       </div>
+
+      <PhotoAttachmentPanel entityType="source" entityId={source.id} />
     </div>
   );
 }

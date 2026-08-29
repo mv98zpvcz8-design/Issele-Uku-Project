@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { EvidenceBadge } from "@/components/archive/EvidenceBadge";
 import { ConfidenceLabel } from "@/components/archive/ConfidenceLabel";
 import { CoverImage } from "@/components/archive/CoverImage";
+import { AttachedPhotos } from "@/components/archive/AttachedPhotos";
 import { StateNotice, NOT_CONNECTED_NOTICE } from "@/components/ui/StateNotice";
 import { createClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIGURED } from "@/lib/supabase/config";
@@ -15,13 +16,34 @@ async function getPersonDetail(slug: string) {
   const { data: person } = await supabase.from("people").select("*").eq("slug", slug).maybeSingle();
   if (!person) return null;
 
-  const { data: links } = await supabase.from("person_sources").select("source_id").eq("person_id", person.id);
-  const sourceIds = (links ?? []).map((l) => l.source_id);
-  const { data: sources } = sourceIds.length
-    ? await supabase.from("sources").select("slug, title, citation").in("id", sourceIds)
-    : { data: [] };
+  const [sourceLinks, placeLinks, eventLinks] = await Promise.all([
+    supabase.from("person_sources").select("source_id").eq("person_id", person.id),
+    supabase.from("place_people").select("place_id").eq("person_id", person.id),
+    supabase.from("event_people").select("event_id").eq("person_id", person.id),
+  ]);
 
-  return { person, sources: sources ?? [] };
+  const sourceIds = (sourceLinks.data ?? []).map((l) => l.source_id);
+  const placeIds = (placeLinks.data ?? []).map((l) => l.place_id);
+  const eventIds = (eventLinks.data ?? []).map((l) => l.event_id);
+
+  const [sources, places, events] = await Promise.all([
+    sourceIds.length
+      ? supabase.from("sources").select("slug, title, citation").in("id", sourceIds)
+      : Promise.resolve({ data: [] }),
+    placeIds.length
+      ? supabase.from("places").select("slug, name").in("id", placeIds)
+      : Promise.resolve({ data: [] }),
+    eventIds.length
+      ? supabase.from("historical_events").select("slug, title").in("id", eventIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  return {
+    person,
+    sources: sources.data ?? [],
+    places: places.data ?? [],
+    events: events.data ?? [],
+  };
 }
 
 export async function generateMetadata({
@@ -49,7 +71,7 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
   const detail = await getPersonDetail(slug);
   if (!detail) notFound();
 
-  const { person, sources } = detail;
+  const { person, sources, places, events } = detail;
 
   return (
     <Container className="max-w-3xl py-12 sm:py-16">
@@ -81,6 +103,47 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
         <p className="mt-6 text-sm text-ink-soft">
           Associated locations: {person.associated_locations.join(", ")}
         </p>
+      )}
+
+      <AttachedPhotos entityType="person" entityId={person.id} />
+
+      {(places.length > 0 || events.length > 0) && (
+        <div className="mt-8 flex flex-wrap gap-10 border-t border-line pt-6">
+          {places.length > 0 && (
+            <div>
+              <h2 className="font-display text-lg font-semibold text-ink">Associated places</h2>
+              <ul className="mt-2 space-y-1">
+                {places.map((place) => (
+                  <li key={place.slug}>
+                    <Link
+                      href={`/places/${place.slug}`}
+                      className="text-sm font-medium text-accent underline underline-offset-2"
+                    >
+                      {place.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {events.length > 0 && (
+            <div>
+              <h2 className="font-display text-lg font-semibold text-ink">Related events</h2>
+              <ul className="mt-2 space-y-1">
+                {events.map((event) => (
+                  <li key={event.slug}>
+                    <Link
+                      href={`/history/${event.slug}`}
+                      className="text-sm font-medium text-accent underline underline-offset-2"
+                    >
+                      {event.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
 
       {sources.length > 0 && (
