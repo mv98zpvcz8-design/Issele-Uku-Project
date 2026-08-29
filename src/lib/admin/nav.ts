@@ -7,4 +7,5 @@ export const ADMIN_NAV = [
   { href: "/admin/places", label: "Places" },
   { href: "/admin/monarchs", label: "Monarchs" },
   { href: "/admin/culture-categories", label: "Culture Categories" },
+  { href: "/admin/submissions", label: "Submissions" },
 ] as const;

@@ -29,3 +29,10 @@ export const COPYRIGHT_OPTIONS = [
   { value: "UNKNOWN", label: "Unknown" },
   { value: "RESTRICTED", label: "Restricted" },
 ] as const;
+
+export const SUBMISSION_STATUS_OPTIONS = [
+  { value: "pending", label: "Pending" },
+  { value: "in_review", label: "In review" },
+  { value: "resolved", label: "Resolved" },
+  { value: "declined", label: "Declined" },
+] as const;

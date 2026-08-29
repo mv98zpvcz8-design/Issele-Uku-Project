@@ -53,9 +53,14 @@ export default async function AdminDashboardPage() {
       )}
 
       {typeof pendingSubmissions === "number" && pendingSubmissions > 0 && (
-        <div className="mt-4 rounded-lg border border-line bg-paper p-4 text-sm text-ink">
-          <strong>{pendingSubmissions}</strong> pending submission{pendingSubmissions === 1 ? "" : "s"}{" "}
-          from the public correction/contribution form (Phase 7 will add a review UI here).
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-paper p-4 text-sm text-ink">
+          <span>
+            <strong>{pendingSubmissions}</strong> pending submission{pendingSubmissions === 1 ? "" : "s"}{" "}
+            from the public correction/contribution form.
+          </span>
+          <Link href="/admin/submissions" className="font-medium text-accent hover:underline">
+            Review queue →
+          </Link>
         </div>
       )}
 

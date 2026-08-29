@@ -224,3 +224,16 @@ insert into public.submissions (
   '[DEMO] Example correction: "The date on record X looks wrong, here is a source that suggests otherwise." This is placeholder text demonstrating the submissions queue.',
   true, true
 );
+
+-- A second demo submission, already actioned, showing what a resolved
+-- material offer with reviewer notes looks like in the queue.
+insert into public.submissions (
+  submission_type, submitter_name, submitter_email, message,
+  confirmed_ownership_or_permission, confirmed_understands_review,
+  review_status, reviewer_notes
+) values (
+  'material', '[DEMO] Another Test Submitter', null,
+  '[DEMO] Example material offer: "I have family photographs from a 1970s festival." This is placeholder text demonstrating an already-reviewed submission.',
+  true, true,
+  'resolved', '[DEMO] Reviewer note: followed up by email, awaiting scanned copies.'
+);

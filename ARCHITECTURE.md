@@ -43,7 +43,10 @@ src/
       page.tsx            Home
       history/, monarchy/, culture/, people/, places/,
       archive/, research-library/, timeline/,
-      transparency/, submit/, privacy/, contact/
+      transparency/, submit/               Public correction/material form (SubmitForm.tsx,
+                                            actions.ts) — anyone may insert, nobody but staff
+                                            may read the row back (RLS, not app code)
+      privacy/, contact/
     admin/                Never nested under (site).
       login/               Public (outside the auth guard): magic-link sign-in form
       actions.ts           signOut()
@@ -56,6 +59,15 @@ src/
           actions.ts          Server actions: create/update/delete (+ media for archive-items)
           new/page.tsx         Create form
           [id]/page.tsx        Edit form (+ delete, + a Preview link to the live public page)
+        submissions/          The public submit form's review queue — no new/create page
+                              (submissions only ever originate from the public form)
+          page.tsx            List, open (pending/in_review) items surfaced above resolved ones
+          actions.ts          updateSubmissionReview() gated by canReview(), deleteSubmission()
+                              gated by canEdit() — a narrower/wider pair than every other
+                              entity's single canEdit() gate, matching the database's own
+                              can_review()/can_edit() split (see the submissions migration)
+          [id]/page.tsx        Detail + status/notes form (or a read-only notice for a role
+                              that can view but not act) + delete for canEdit() roles only
     auth/callback/route.ts Exchanges a magic-link code for a session
   components/
     layout/               Header, Footer, Container, StatusBanner — shared chrome

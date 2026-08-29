@@ -49,6 +49,11 @@ export function canEdit(role: UserRole): boolean {
   return role === "ADMIN" || role === "EDITOR";
 }
 
+/** ADMIN/EDITOR/REVIEWER may triage the submissions queue — mirrors public.can_review() in the database. */
+export function canReview(role: UserRole): boolean {
+  return role === "ADMIN" || role === "EDITOR" || role === "REVIEWER";
+}
+
 /**
  * Guards a create/edit form PAGE (not just the server action it submits
  * to). Without this, a RESEARCHER/REVIEWER could open a full form, fill
