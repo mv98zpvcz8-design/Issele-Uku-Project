@@ -1,4 +1,5 @@
 import type { Database } from "@/lib/supabase/types";
+import { LightboxImage } from "./LightboxImage";
 
 type ArchiveMedia = Database["public"]["Tables"]["archive_media"]["Row"];
 
@@ -43,8 +44,7 @@ function MediaItem({ media, itemTitle, large }: { media: ArchiveMedia; itemTitle
 
   if (media.media_type === "image") {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- src is a same-origin redirect to a short-lived signed URL, not a static asset next/image can optimize
-      <img
+      <LightboxImage
         src={src}
         alt={alt}
         className={`w-full rounded-lg border border-line object-cover ${large ? "aspect-video" : "aspect-square"}`}
