@@ -96,6 +96,7 @@ creating it, per the cost-control rule.
    | `SUPABASE_SERVICE_ROLE_KEY` | service_role key | **Secret — enter it directly in Vercel, don't paste it into chat or a file** |
 
 4. Apply the schema to that project: `npx supabase link --project-ref <your-project-ref>` then `npx supabase db push` (pushes `supabase/migrations/`). Demo data is separate and optional: `npx supabase db reset` only against a local/dev database, never against the linked project, seeds it — see DATABASE.md.
+   - Separately, `supabase/real_content.sql` holds the first pass of real, web-sourced (not demo) content — see DECISIONS.md D-024 for exactly how it was researched and why every row lands at `REVIEW` status. It is not applied by `db push` or `db reset`; run it deliberately once against the real project (`psql "<connection string>" -f supabase/real_content.sql`) **after** re-verifying its citations yourself (the sourcing pass had no direct page-fetch access — see the file's own header comment) and, for the monarch records specifically, after confirming them with the palace/community. Nothing in it becomes public until you also move its rows from `REVIEW` to `PUBLISHED`.
 5. For local development, copy `.env.example` to `.env.local` and fill in the same three values (`.env.local` is already git-ignored).
 
 I can run step 4 myself if you paste the project ref and the two public

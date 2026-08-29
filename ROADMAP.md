@@ -26,6 +26,9 @@ Status legend: ✅ done · 🚧 in progress · ⏳ not started
 - A chronological-sort bug affecting both `/timeline` and the existing `/history` listing (from Phase 4): PostgREST's `.order('date_from').order('date_exact')` can't express "use whichever is set," so an event with only `date_exact` populated would incorrectly sort after every event with any `date_from`, however much later. Fixed with a client-side, unit-tested coalescing sort (`lib/timeline/sort.ts`) — see DECISIONS.md D-022.
 - The `test` npm script's glob was unquoted, so shell expansion (not Node's own correct recursive matching) was silently deciding which test files actually ran — it had been passing only by accident. Fixed by quoting it, which surfaced two further `@/`-alias-under-plain-Node import errors, also fixed (D-023).
 
+## Milestone — First real content (web-researched, pending human review)
+✅ `supabase/real_content.sql`: the archive's first non-demo content — 12 real cited sources, 3 culture categories, 12 places, 2 monarchs, 4 historical events, all researched via `WebSearch` (direct page-fetching was blocked by this environment's network policy for every domain tried) and every row landed at `REVIEW` status, not `PUBLISHED` — verified with the same RLS testing used since Phase 2 that none of it is publicly visible yet. See DECISIONS.md D-024 for the full reasoning, including why the monarch records especially need palace/community confirmation before publication, and DEPLOYMENT.md for how to apply and review the file once a real Supabase project exists.
+
 ## Phase 6 — Admin
 ⏳ Supabase Auth-based admin authentication. Role architecture (ADMIN/EDITOR/RESEARCHER/REVIEWER) — simple initially, structured for growth. CRUD for archive records, sources, events, people, places, monarchs. Draft/preview/publish/unpublish workflow. Verification and sensitivity flags.
 
