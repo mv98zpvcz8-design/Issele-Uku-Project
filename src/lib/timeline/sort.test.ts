@@ -14,6 +14,18 @@ test("sortEventsChronologically: an event with only date_exact sorts correctly a
   );
 });
 
+test("sortEventsChronologically: an event with only date_to (no date_from/date_exact) still sorts by it, not as undated", () => {
+  const events = [
+    { title: "Recent event (date_exact)", date_from: null, date_exact: "2020-01-01" },
+    { title: "Ancient event (date_to only)", date_from: null, date_exact: null, date_to: "1230-01-01" },
+  ];
+  const sorted = sortEventsChronologically(events);
+  assert.deepEqual(
+    sorted.map((e) => e.title),
+    ["Ancient event (date_to only)", "Recent event (date_exact)"],
+  );
+});
+
 test("sortEventsChronologically: undated events sort last, alphabetically among themselves", () => {
   const events = [
     { title: "Zebra undated", date_from: null, date_exact: null },

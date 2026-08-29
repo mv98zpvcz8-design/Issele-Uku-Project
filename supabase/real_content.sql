@@ -259,12 +259,23 @@ values (
 -- living traditional institution are exactly the kind of claim
 -- HISTORICAL_METHOD.md requires be presented as contested, not settled,
 -- especially where they touch dynastic descent from another kingdom.
-insert into public.historical_events (slug, title, description, date_to, date_display, evidence_type, confidence_level, verification_status)
+-- Column note: date_exact is used for a precisely-known single day,
+-- date_from for an approximate placement of a fuzzier date (here, a
+-- month-only coronation date), date_to for a known upper bound on an
+-- otherwise-uncertain date (the founding). All three previously had NO
+-- machine-readable date at all except the founding row — a real bug
+-- (see DECISIONS.md and src/lib/timeline/sort.ts's own comment) that
+-- made the timeline sort these three as "undated," dumping them at the
+-- end instead of in chronological order. Fixed here, not just in the
+-- sort logic, since the sort fix alone couldn't invent a date that was
+-- never stored.
+insert into public.historical_events
+  (slug, title, description, date_exact, date_from, date_to, date_display, evidence_type, confidence_level, verification_status)
 values (
   'founding-of-issele-uku',
   'Founding of Issele-Uku',
   'Secondary-source summaries describe Issele-Uku as an Igbo settlement founded before approximately 1230 CE. One account attributes the kingdom''s founding to a Prince Uwadiaie, described as the second son of Oba Eweka I of Benin — a claim that would tie Issele-Uku''s dynastic origin to the Benin royal lineage. This is recorded here as one reported account, not as an agreed history: founding narratives of this kind are frequently contested between communities and traditions, no primary or academic source for this specific claim was found, and it has not been cross-checked against the Issele-Uku community''s own account of its history. Do not treat as settled.',
-  '1230-01-01',
+  null, null, '1230-01-01',
   'before c. 1230 CE (approximate; founding narrative disputed/uncorroborated)',
   'DISPUTED', 'LOW', 'REVIEW'
 ),
@@ -272,7 +283,7 @@ values (
   'diocese-of-issele-uku-established',
   'Roman Catholic Diocese of Issele-Uku established',
   'The Roman Catholic Diocese of Issele-Uku was created from territory formerly part of the Archdiocese of Benin City, covering (per its own account) six Local Government Areas west of the Niger: Aniocha North, Aniocha South, Ika North East, Ika South, Oshimili North, and Oshimili South. Its first bishop, Most Rev. Dr. Anthony Okonkwor Gbuji, was consecrated on 30 September 1973 and served until 8 November 1996.',
-  null,
+  '1973-07-05', null, null,
   '5 July 1973',
   'DOCUMENTED', 'HIGH', 'REVIEW'
 ),
@@ -280,7 +291,7 @@ values (
   'death-of-obi-henry-ezeagwuna-ii',
   'Death of Obi Henry Ezeagwuna II',
   'Obi Henry Ezeagwuna II, the traditional ruler of Issele-Uku, died in a motor accident on the Benin–Asaba–Onitsha expressway.',
-  null,
+  '2014-08-09', null, null,
   '9 August 2014',
   'DOCUMENTED', 'MEDIUM', 'REVIEW'
 ),
@@ -288,7 +299,7 @@ values (
   'coronation-of-obi-nduka-ezeagwuna-ii',
   'Coronation of Obi Nduka Ezeagwuna II',
   'Nduka Ezeagwuna, son and successor of the late Obi Henry Ezeagwuna II, was crowned Obi of Issele-Uku following a period of traditional coronation rites. Ahead of his enthronement he visited Oba Ewuare II of Benin, described in coverage as customary given the historical relationship between the two thrones. Sources report the exact coronation date variously as 21 or 29 December 2016.',
-  null,
+  null, '2016-12-01', null,
   'December 2016',
   'DOCUMENTED', 'MEDIUM', 'REVIEW'
 );
@@ -474,3 +485,65 @@ where e.slug = 'ekumeku-resistance-movement' and s.slug in ('wikipedia-ekumeku-m
 insert into public.event_people (event_id, person_id)
 select e.id, p.id from public.historical_events e, public.people p
 where e.slug = 'ekumeku-resistance-movement' and p.slug = 'nwabuzo-olimagwo';
+
+-- ============================================================================
+-- SECOND ADDENDUM — filling real chronological gaps in the timeline. The
+-- previous content left a ~650-year gap between the disputed c.1230
+-- founding and the 1883 Ekumeku movement, and another ~60-year gap between
+-- 1914 and 1973. Searched specifically for real, dateable, Issele-Uku-
+-- specific events in those gaps rather than padding with generic regional
+-- history — a search for the town's own experience of the 1967-1970
+-- Nigerian Civil War turned up nothing town-specific (only region-wide
+-- Anioma coverage), so nothing was added for that period rather than
+-- presenting a regional claim as if it were about Issele-Uku itself. The
+-- pre-1883 gap remains real and unfilled: no source beyond the disputed
+-- founding narrative was found for that span.
+-- ============================================================================
+
+insert into public.sources (slug, title, source_type, url, publisher, access_status, reliability_notes, verification_status) values
+(
+  'aniocha-north-lga-official',
+  'About Aniocha North Local Government Council',
+  'website',
+  'https://aniochanorthlga.dl.gov.ng/about/anlgc',
+  'Aniocha North Local Government Council (official site)',
+  'external_access',
+  'Primary/official source for the LGA''s own founding date and headquarters. Corroborated independently by Wikipedia and Wikidata in search results.',
+  'REVIEW'
+),
+(
+  'deltastate-technical-education-issele-uku-tech',
+  'Issele-Uku Tech',
+  'website',
+  'https://technicaleducation.deltastate.gov.ng/issele-uku-tech/',
+  'Delta State Ministry of Technical Education (official site)',
+  'external_access',
+  'Official state government source, but a single source with no independent corroboration found — treat the exact 2021 date as reasonably reliable (it is the source''s own stated launch timeframe) but not independently confirmed.',
+  'REVIEW'
+);
+
+insert into public.historical_events (slug, title, description, date_exact, date_display, evidence_type, confidence_level, verification_status)
+values (
+  'aniocha-north-lga-created',
+  'Aniocha North Local Government Area created, headquartered in Issele-Uku',
+  'Aniocha North Local Government Area was carved out of the former Aniocha Local Government Area of the then Bendel State on 27 August 1991, the same day Delta State itself was created from Bendel State, by the military government of General Ibrahim Babangida. Issele-Uku became — and remains — the LGA''s headquarters. The area comprises three major clans (Ezechima, Idumuje, and Odiani) and 18 communities.',
+  '1991-08-27',
+  '27 August 1991',
+  'DOCUMENTED', 'MEDIUM', 'REVIEW'
+),
+(
+  'issele-uku-technical-college-established',
+  'Issele-Uku Technical College established',
+  'A government technical college was established in Issele-Uku under Delta State''s technical education programme, per the state Ministry of Technical Education''s own site, which states a September 2021 kickoff for its new technical colleges including this one. Further detail beyond the launch timeframe: research pending.',
+  '2021-09-01',
+  'September 2021',
+  'DOCUMENTED', 'LOW', 'REVIEW'
+);
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'aniocha-north-lga-created' and s.slug = 'aniocha-north-lga-official';
+
+insert into public.event_sources (event_id, source_id)
+select e.id, s.id from public.historical_events e, public.sources s
+where e.slug = 'issele-uku-technical-college-established' and s.slug = 'deltastate-technical-education-issele-uku-tech';
